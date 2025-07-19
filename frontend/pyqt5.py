@@ -1,6 +1,7 @@
 import os
 import subprocess
 import ctypes
+import sys
 from datetime import datetime
 from threading import Thread, Lock
 from PyQt5.QtCore import Qt
@@ -27,8 +28,8 @@ class MainApp(QWidget):
             print2FeedbackConsole= self.print2FeedbackConsole,
             validSourcePlatforms = self.validSourcePlatforms,
         )
-        self.leftLabelPath: str = r".\frontend\images\turbovault4dbt_logo_rgb.svg"
-        self.rightLabelPath: str = r".\frontend\images\scalefree_logo_rgb.svg"
+        self.leftLabelPath: str = r"./frontend/images/turbovault4dbt_logo_rgb.svg"
+        self.rightLabelPath: str = r"./frontend/images/scalefree_logo_rgb.svg"
         self.selections: dict = {
             'Tasks': [], 
             'Sources': [], 
@@ -42,8 +43,9 @@ class MainApp(QWidget):
         
         self.lock = Lock()  
         self.setWindowTitle("TurboVault4dbt")
-        self.setWindowIcon(QIcon(r".\frontend\images\app_icon.png")) # Icon image should be replaced with SVG (or .ico)
-        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("TurboVault4dbt")
+        self.setWindowIcon(QIcon(r"./frontend/images/app_icon.png")) # Icon image should be replaced with SVG (or .ico)
+        if sys.platform == "win32":
+            ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID("TurboVault4dbt")
         self.setGeometry(100, 100, 800, 1280)
         self.setupUI()
         
@@ -270,7 +272,7 @@ class MainApp(QWidget):
 
         # Load and set a GIF animation as the background ## Change transparency vaule of the feedback console to reveal the background image
         self.gifBackground = QLabel(self)
-        gif: QMovie = QMovie(r".\frontend\images\Test.gif")
+        gif: QMovie = QMovie(r"./frontend/images/Test.gif")
         self.gifBackground.setMovie(gif)
         gif.start()
 
@@ -392,7 +394,11 @@ class MainApp(QWidget):
         self.sourcesList.setDisabled(False)
         self.deselectAllTasksBtn.setDisabled(False)
         self.tasksList.setDisabled(False)
-        subprocess.Popen(f'explorer "{os.path.abspath("./models/")}"')
+        models_path = os.path.abspath("./models/")
+        if sys.platform == "win32":
+            subprocess.Popen(f'explorer "{models_path}"')
+        else:
+            subprocess.Popen(["xdg-open", models_path])
         self.enableWidgets(True)
         
     def onStart(self):
