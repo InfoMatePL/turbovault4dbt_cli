@@ -32,10 +32,10 @@ class Snowflake:
     
     def configParser(self)->bool:
         try:
-            root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-            root = '\\'.join(root.split('\\')[0:-1])  ## get one step back from the root folder
+            root = os.path.dirname(os.path.abspath(__file__))
+            root = os.path.dirname(root)  ## get one step back from the root folder
             self.model_path = self.config.get('model_path')
-            self.model_path = os.path.join(root , self.model_path.replace('../', '').replace('/', '\\'))
+            self.model_path = os.path.join(root, self.model_path.replace('../', ''))
             self.snowflake_credentials = RawConfigParser()
             self.snowflake_credentials.read(self.config.get('credential_path'))
             self.user = self.snowflake_credentials.get('main', 'SNOWFLAKE_USER_NAME')

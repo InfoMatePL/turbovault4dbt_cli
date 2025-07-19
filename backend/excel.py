@@ -10,10 +10,10 @@ class Excel:
         self.todo = []
         self.config = kwargs.get('turboVaultconfigs')
         self.excel_path = self.config.get('excel_path')
-        root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-        root = '\\'.join(root.split('\\')[0:-1])  ## get one step back from the root folder
+        root = os.path.dirname(os.path.abspath(__file__))
+        root = os.path.dirname(root)  ## get one step back from the root folder
         self.model_path = self.config.get('model_path')
-        self.model_path = os.path.join(root , self.model_path.replace('../', '').replace('/', '\\'))
+        self.model_path = os.path.join(root, self.model_path.replace('../', ''))
         self.data_structure ={
             'print2FeedbackConsole': kwargs.get('print2FeedbackConsole'),
             'console_outputs': True,

@@ -8,7 +8,11 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import (
     QColor, QIcon, QMovie, QPixmap, QStandardItem, QStandardItemModel
 )
-from PyQt5.QtSvg import QSvgWidget
+try:
+    from PyQt5.QtSvg import QSvgWidget
+    SVG_AVAILABLE = True
+except ImportError:
+    SVG_AVAILABLE = False
 from PyQt5.QtWidgets import (
     QCheckBox, QComboBox, QLabel, QListWidget, QListWidgetItem,
     QStackedLayout, QVBoxLayout, QHBoxLayout, QGridLayout, QScrollBar, QTextEdit, QWidget
@@ -59,10 +63,16 @@ class MainApp(QWidget):
 
         # Left image
         self.leftImageLabel = QLabel(self)
-        svgWidget = QSvgWidget(self.leftLabelPath)
-        svgWidget.setFixedSize(300, 86)
-        svgWidget.mousePressEvent = self.redirectToGoogle
-        imageLayout.addWidget(svgWidget, alignment=Qt.AlignLeft | Qt.AlignTop)
+        if SVG_AVAILABLE:
+            svgWidget = QSvgWidget(self.leftLabelPath)
+            svgWidget.setFixedSize(300, 86)
+            svgWidget.mousePressEvent = self.redirectToGoogle
+            imageLayout.addWidget(svgWidget, alignment=Qt.AlignLeft | Qt.AlignTop)
+        else:
+            pixmap = QPixmap(self.leftLabelPath)
+            self.leftImageLabel.setPixmap(pixmap.scaled(300, 86, Qt.KeepAspectRatio))
+            self.leftImageLabel.mousePressEvent = self.redirectToGoogle
+            imageLayout.addWidget(self.leftImageLabel, alignment=Qt.AlignLeft | Qt.AlignTop)
 
         # Right image
         self.rightImageLabel = QLabel(self)

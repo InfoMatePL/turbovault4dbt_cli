@@ -14,10 +14,10 @@ class GoogleSheets:
     def __init__(self, **kwargs):
         self.todo = []
         self.config = kwargs.get('turboVaultconfigs')
-        root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-        root = '\\'.join(root.split('\\')[0:-1])  ## get one step back from the root folder
+        root = os.path.dirname(os.path.abspath(__file__))
+        root = os.path.dirname(root)  ## get one step back from the root folder
         self.model_path = self.config.get('model_path')
-        self.model_path = os.path.join(root , self.model_path.replace('../', '').replace('/', '\\'))
+        self.model_path = os.path.join(root, self.model_path.replace('../', ''))
         self.credential_path = self.config.get('gcp_oauth_credentials')
         self.sheet_url = self.config.get('sheet_url')
         self.data_structure ={
