@@ -4,7 +4,7 @@ import ctypes
 import sys
 from datetime import datetime
 from threading import Thread, Lock
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, pyqtSignal
 from PyQt5.QtGui import (
     QColor, QIcon, QMovie, QPixmap, QStandardItem, QStandardItemModel
 )
@@ -21,6 +21,7 @@ from frontend.PyQt5CustomClasses import QPushButton
 from frontend.events import Events
 from frontend.styles import styles
 class MainApp(QWidget):
+    sourcesLoaded = pyqtSignal(list)
     def __init__(self, **kwargs) -> None:
         super().__init__()
         ConfigData: dict = kwargs.pop('configData') # Config data gettin poped
@@ -93,6 +94,7 @@ class MainApp(QWidget):
         # Connect the itemSelectionChanged signals after all components are created
         self.sourcesList.itemSelectionChanged.connect(self.updateStartButtonState)
         self.tasksList.itemSelectionChanged.connect(self.updateStartButtonState)
+        self.sourcesLoaded.connect(self._updateSourcesList, Qt.QueuedConnection)
 
         # Initial state update
         self.updateStartButtonState()
@@ -334,25 +336,28 @@ class MainApp(QWidget):
     def updateGifBackgroundSize(self, event):
         self.gifBackground.setBaseSize(self.feedbackConsole.size())
 
-    def __updateSources(self, lock):
-        lock.acquire()
+    def _updateSourcesList(self, sources):
+        print("Updating sources list in main thread:", sources)
         self.sourcesList.clear()
-        self.selections['SourcePlatform']= self.sourcePlatformCombo.currentText()
-        sources: list = self.events.onDropdownSelection(self.selections['SourcePlatform'])
         for source in sources:
             self.sourcesList.addItem(QListWidgetItem(source))
         self.enableWidgets(True)
-        lock.release()    
-        
+
+    def __updateSources(self):
+        print("Thread: fetching sources")
+        self.selections['SourcePlatform'] = self.sourcePlatformCombo.currentText()
+        sources = self.events.onDropdownSelection(self.selections['SourcePlatform'])
+        print("Dropdown selection:", self.selections['SourcePlatform'])
+        print("Sources returned:", sources)
+        self.sourcesLoaded.emit(sources)
+
     def updateSources(self, index: int) -> None:
         if self.sourcePlatformCombo.findText('Select a platform') == 0:
             self.sourcePlatformCombo.removeItem(0)
-        
         else:
             self.enableWidgets(False)
             Thread(
-                target=self.__updateSources,  
-                args= (Lock(),),
+                target=self.__updateSources,
                 name=('Metadata selection'),
             ).start()
 
