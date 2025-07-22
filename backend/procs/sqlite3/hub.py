@@ -91,7 +91,11 @@ def generate_hub(data_structure):
     model_path = data_structure['model_path']
     source_name = data_structure['source_name'] 
     source_object = data_structure['source_object'] 
-    hub_list = generate_hub_list(cursor=cursor, source=source, source_name= source_name, source_object= source_object)
+    try:
+        hub_list = generate_hub_list(cursor=cursor, source=source, source_name= source_name, source_object= source_object)
+    except Exception as e:
+        data_structure['print2FeedbackConsole'](message=f"Failed to query hub_list: {e}")
+        return
 
     for hub in hub_list:
 
@@ -107,10 +111,13 @@ def generate_hub(data_structure):
         source_models = generate_source_models(cursor, hub_id)
         hashkey = generate_hashkey(cursor, hub_id)
     
-        #with open(os.path.join(".","templates","hub.txt"),"r") as f:
         root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        with open(os.path.join(root,"templates","hub.txt"),"r") as f:
-            command_tmp = f.read()
+        try:
+            with open(os.path.join(root, "templates", "hub.txt"), "r") as f:
+                command_tmp = f.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template hub.txt: {e}")
+            return
         f.close()
         command = command_tmp.replace('@@Schema', rdv_default_schema).replace('@@SourceModels', source_models).replace('@@Hashkey', hashkey).replace('@@BusinessKeys', bk_string)
            

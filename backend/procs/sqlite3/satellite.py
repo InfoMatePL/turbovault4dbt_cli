@@ -42,7 +42,11 @@ def generate_satellite(data_structure):
     hashdiff_naming = data_structure['hashdiff_naming']    
     source_name = data_structure['source_name'] 
     source_object = data_structure['source_object'] 
-    satellite_list = generate_satellite_list(cursor=cursor, source=source,source_name=source_name, source_object= source_object)
+    try:
+        satellite_list = generate_satellite_list(cursor=cursor, source=source,source_name=source_name, source_object= source_object)
+    except Exception as e:
+        data_structure['print2FeedbackConsole'](message=f"Failed to query satellite_list: {e}")
+        return
 
     for satellite in satellite_list:
         satellite_name = satellite[1]
@@ -59,8 +63,12 @@ def generate_satellite(data_structure):
         
         #Satellite_v0
         root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        with open(os.path.join(root,"templates","sat_v0.txt"),"r") as f:
-            command_tmp = f.read()
+        try:
+            with open(os.path.join(root, "templates", "sat_v0.txt"), "r") as f:
+                command_tmp = f.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template sat_v0.txt: {e}")
+            return
         f.close()
         command_v0 = command_tmp.replace('@@SourceModel', source_model).replace('@@Hashkey', hashkey_column).replace('@@Hashdiff', hashdiff_column).replace('@@Payload', payload).replace('@@LoadDate', loaddate).replace('@@Schema', rdv_default_schema)
             
@@ -87,8 +95,12 @@ def generate_satellite(data_structure):
 
         #Satellite_v1
         root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        with open(os.path.join(root,"templates","sat_v1.txt"),"r") as f:
-            command_tmp = f.read()
+        try:
+            with open(os.path.join(root, "templates", "sat_v1.txt"), "r") as f:
+                command_tmp = f.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template sat_v1.txt: {e}")
+            return
         f.close()
         command_v1 = command_tmp.replace('@@SatName', satellite_model_name_v0).replace('@@Hashkey', hashkey_column).replace('@@Hashdiff', hashdiff_column).replace('@@LoadDate', loaddate).replace('@@Schema', rdv_default_schema)
             

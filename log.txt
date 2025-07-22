@@ -1,0 +1,53 @@
+Created sources.yml
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
+Failed to query hub_list: no such column: h.Group_Name
+Failed to query satellite_list: no such column: hs.Group_Name
+Process successfully executed and models are ready to be used in Datavault 4dbt.

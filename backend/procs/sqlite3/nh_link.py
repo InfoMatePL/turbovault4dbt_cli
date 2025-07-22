@@ -145,9 +145,13 @@ def generate_nh_link(data_structure):
 
 
 
-    root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-    with open(os.path.join(root,"templates","nh_link.txt"),"r") as f:
-        command_tmp = f.read()
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    try:
+        with open(os.path.join(root, "templates", "nh_link.txt"), "r") as f:
+            command_tmp = f.read()
+    except Exception as e:
+        data_structure['print2FeedbackConsole'](message=f"Failed to load template nh_link.txt: {e}")
+        return
     f.close()
     command = command_tmp.replace('@@Schema', rdv_default_schema).replace('@@SourceModels', source_models).replace('@@LinkHashkey', link_hashkey).replace('@@ForeignHashkeys', fk_string).replace('@@Payload',target_payload)
 

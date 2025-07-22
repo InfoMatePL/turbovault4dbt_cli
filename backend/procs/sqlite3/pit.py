@@ -86,10 +86,13 @@ def generate_pit(data_structure):
         all_satellite_names += f"\n\t- {sat}"
 
 
-    root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-    with open(os.path.join(root,"templates","pit_v1.txt"),"r") as f:
-
-        command_tmp = f.read()
+    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    try:
+        with open(os.path.join(root, "templates", "pit_v1.txt"), "r") as f:
+            command_tmp = f.read()
+    except Exception as e:
+        data_structure['print2FeedbackConsole'](message=f"Failed to load template pit_v1.txt: {e}")
+        return
     f.close()
     command = command_tmp.replace('@@TrackedEntity', tracked_entity).replace('@@PK', pk).replace('@@SnapshotModelName', snapshot_model_name).replace('@@SnapshotTriggerColumn', snapshot_trigger_column).replace('@@DimensionKey',dimension_key_name).replace('@@SatNames',all_satellite_names)
     
@@ -111,8 +114,12 @@ def generate_pit(data_structure):
             data_structure['print2FeedbackConsole'](message= f"Created Pit Model {pit_name}")
 
         #control_snap_v0
-        with open('templates/control_snap_v0.txt') as f1:
-            control_snap = f1.read()
+        try:
+            with open(os.path.join(root, "templates", "control_snap_v0.txt")) as f1:
+                control_snap = f1.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v0.txt: {e}")
+            return
         f1.close()
 
         filename_snap1 = os.path.join(model_path_control , f"control_snap_v0.sql")
@@ -132,8 +139,12 @@ def generate_pit(data_structure):
 
 
         #control_snap_v1
-        with open('templates/control_snap_v1.txt') as f1:
-            control_snap = f1.read()
+        try:
+            with open(os.path.join(root, "templates", "control_snap_v1.txt")) as f1:
+                control_snap = f1.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v1.txt: {e}")
+            return
         f1.close()
 
         filename_snap0 = os.path.join(model_path_control , f"control_snap_v1.sql")

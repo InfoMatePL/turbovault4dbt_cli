@@ -191,12 +191,13 @@ def generate_stage(data_structure):
   except:
     pass
   
-  hashed_columns = gen_hashed_columns(cursor, hashdiff_naming, source_name, source_object)
-  prejoins = gen_prejoin_columns(cursor, source_name, source_object)
   try:
-    multiactive = gen_multiactive_columns(cursor, source_name, source_object) ## TODO: here the code fails and generates None
-  except:
-    multiactive = ""
+    hashed_columns = gen_hashed_columns(cursor, hashdiff_naming, source_name, source_object)
+    prejoins = gen_prejoin_columns(cursor, source_name, source_object)
+    multiactive = gen_multiactive_columns(cursor, source_name, source_object)
+  except Exception as e:
+    data_structure['print2FeedbackConsole'](message=f"Failed to query columns for Stage: {e}")
+    return
   group_name = get_groupname(cursor,source_name,source_object)
   model_path = model_path.replace("@@GroupName", 'Stage').replace("@@SourceSystem", source_name).replace('@@timestamp',generated_timestamp)
 
@@ -214,9 +215,13 @@ def generate_stage(data_structure):
     ldts = row[3]
     source_system_name = row[4]
 
-  root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-  with open(os.path.join(root,"templates","stage.txt"),"r") as f:
+  root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+  try:
+    with open(os.path.join(root, "templates", "stage.txt"), "r") as f:
       command_tmp = f.read()
+  except Exception as e:
+    data_structure['print2FeedbackConsole'](message=f"Failed to load template stage.txt: {e}")
+    return
   f.close()
   command = command_tmp.replace("@@RecordSource",rs).replace("@@LoadDate",ldts).replace("@@HashedColumns", hashed_columns).replace("@@PrejoinedColumns",prejoins).replace('@@SourceName',source_system_name).replace('@@SourceTable',source_table_name).replace('@@SCHEMA',stage_default_schema).replace('@@MultiActive',multiactive)
 

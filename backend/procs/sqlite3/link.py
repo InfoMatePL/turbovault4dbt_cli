@@ -104,9 +104,12 @@ def generate_link(data_structure):
 
 
     root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    with open(os.path.join(root,"templates","link.txt"),"r") as f:
-    #with open(os.path.join(".","templates","link.txt"),"r") as f:
-        command_tmp = f.read()
+    try:
+        with open(os.path.join(root, "templates", "link.txt"), "r") as f:
+            command_tmp = f.read()
+    except Exception as e:
+        data_structure['print2FeedbackConsole'](message=f"Failed to load template link.txt: {e}")
+        return
     f.close()
     command = command_tmp.replace('@@Schema', rdv_default_schema).replace('@@SourceModels', source_models).replace('@@LinkHashkey', link_hashkey).replace('@@ForeignHashkeys', fk_string)
     

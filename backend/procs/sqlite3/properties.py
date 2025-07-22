@@ -16,21 +16,28 @@ def gen_properties(data_structure):
     group_name = 'RDV/' + get_groupname(cursor,source_name,source_object)
 
     #Generating Hub Tests
-    hub_query = f"""SELECT DISTINCT Target_Hub_table_physical_name,Target_Primary_Key_Physical_Name 
-    from standard_hub h
-    INNER JOIN source_data src on src.Source_table_identifier = h.Source_Table_Identifier
-    WHERE 1=1
-    AND h.Is_Primary_Source = '1'
-    AND src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'"""
-    cursor.execute(hub_query)
-    results = cursor.fetchall()
-
+    try:
+        hub_query = f"""SELECT DISTINCT Target_Hub_table_physical_name,Target_Primary_Key_Physical_Name 
+        from standard_hub h
+        INNER JOIN source_data src on src.Source_table_identifier = h.Source_Table_Identifier
+        WHERE 1=1
+        AND h.Is_Primary_Source = '1'
+        AND src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'"""
+        cursor.execute(hub_query)
+        results = cursor.fetchall()
+    except Exception as e:
+        data_structure['print2FeedbackConsole'](message=f"Failed to query hub test columns: {e}")
+        return
     for hub in results:
         hub_name = hub[0]
         hub_hk = hub[1]
-        root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-        with open(os.path.join(root,"templates","hub_test.txt"),"r") as f:
-            command_tmp = f.read()
+        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        try:
+            with open(os.path.join(root, "templates", "hub_test.txt"), "r") as f:
+                command_tmp = f.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template hub_test.txt: {e}")
+            return
         f.close()
         command_tmp = command_tmp.replace("@@HubName",hub_name).replace("@@HubHK",hub_hk)
         command = command + '\n'+command_tmp
@@ -61,15 +68,23 @@ def gen_properties(data_structure):
         link_hk = link[1]
         ref_hub = link[2].split(',')
         root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-        with open(os.path.join(root,"templates","link_test.txt"),"r") as f:
-            command_tmp = f.read()
+        try:
+            with open(os.path.join(root,"templates","link_test.txt"),"r") as f:
+                command_tmp = f.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template link_test.txt: {e}")
+            return
         f.close()
         ref_hub_tmp = ""
         for hub in ref_hub:
             hub_name,hub_hk = hub.split(';')
             root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-            with open(os.path.join(root,"templates","link_hub_test.txt"),"r") as f:
-                hub_tmp = f.read()
+            try:
+                with open(os.path.join(root,"templates","link_hub_test.txt"),"r") as f:
+                    hub_tmp = f.read()
+            except Exception as e:
+                data_structure['print2FeedbackConsole'](message=f"Failed to load template link_hub_test.txt: {e}")
+                return
             f.close()
             ref_hub_tmp = ref_hub_tmp + '\n' + hub_tmp.replace('@@HubName',hub_name).replace("@@HubHK",hub_hk)
         command_tmp = command_tmp.replace("@@LinkName",link_name).replace("@@LinkHK",link_hk).replace("@@HubRef",ref_hub_tmp)
@@ -105,8 +120,12 @@ def gen_properties(data_structure):
         parent_name = sat[1]
         parent_hk = sat[2]
         root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-        with open(os.path.join(root,"templates","sat_test.txt"),"r") as f:
-            command_tmp = f.read()
+        try:
+            with open(os.path.join(root,"templates","sat_test.txt"),"r") as f:
+                command_tmp = f.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template sat_test.txt: {e}")
+            return
         f.close()
         command_tmp = command_tmp.replace('@@SatName',sat_name).replace('@@ParentHK',parent_hk).replace('@@ParentTable',parent_name)
         command = command + '\n' + command_tmp
@@ -144,8 +163,12 @@ def gen_properties(data_structure):
         entity_name = pit[1]
         entity_hk = pit[2]
         root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
-        with open(os.path.join(root,"templates","pit_test.txt"),"r") as f:
-            command_tmp = f.read()
+        try:
+            with open(os.path.join(root,"templates","pit_test.txt"),"r") as f:
+                command_tmp = f.read()
+        except Exception as e:
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template pit_test.txt: {e}")
+            return
         f.close()
         command_tmp = command_tmp.replace('@@PitName',pit_name).replace('@@HK',entity_hk).replace('@@Entity',entity_name)
         command = command + '\n' + command_tmp
