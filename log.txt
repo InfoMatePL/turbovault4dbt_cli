@@ -1,53 +1,287 @@
 Created sources.yml
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
-Failed to query columns for Stage: no such column: h.Target_Role_Primary_Key_Physical_Name
-Failed to query hub_list: no such column: h.Group_Name
-Failed to query satellite_list: no such column: hs.Group_Name
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table1
+Created Satellite Model sat_table1
+Failed to generate the Standard Link Support_.._Object1: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object1: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object1: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table1
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object1: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub ERP_.._Object2: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table2
+Created Satellite Model sat_table2
+Failed to generate the Standard Link ERP_.._Object2: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object2: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object2: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table2
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object2: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table3
+Created Satellite Model sat_table3
+Failed to generate the Standard Link CRM_.._Object3: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link CRM_.._Object3: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time CRM_.._Object3: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table3
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite CRM_.._Object3: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Billing_.._Object4: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table4
+Created Satellite Model sat_table4
+Failed to generate the Standard Link Billing_.._Object4: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Billing_.._Object4: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Billing_.._Object4: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table4
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Billing_.._Object4: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table5
+Created Satellite Model sat_table5
+Failed to generate the Standard Link ERP_.._Object5: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object5: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object5: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table5
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object5: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Support_.._Object6: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table6
+Created Satellite Model sat_table6
+Failed to generate the Standard Link Support_.._Object6: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object6: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object6: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table6
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object6: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Support_.._Object7: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table7
+Created Satellite Model sat_table7
+Failed to generate the Standard Link Support_.._Object7: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object7: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object7: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table7
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object7: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table8
+Created Satellite Model sat_table8
+Failed to generate the Standard Link Billing_.._Object8: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Billing_.._Object8: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Billing_.._Object8: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table8
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Billing_.._Object8: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub ERP_.._Object9: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table9
+Created Satellite Model sat_table9
+Failed to generate the Standard Link ERP_.._Object9: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object9: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object9: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table9
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object9: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Support_.._Object10: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table10
+Created Satellite Model sat_table10
+Failed to generate the Standard Link Support_.._Object10: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object10: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object10: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table10
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object10: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table11
+Created Satellite Model sat_table11
+Failed to generate the Standard Link Billing_.._Object11: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Billing_.._Object11: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Billing_.._Object11: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table11
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Billing_.._Object11: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table12
+Created Satellite Model sat_table12
+Failed to generate the Standard Link Support_.._Object12: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object12: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object12: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table12
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object12: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table13
+Created Satellite Model sat_table13
+Failed to generate the Standard Link ERP_.._Object13: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object13: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object13: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table13
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object13: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Support_.._Object14: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table14
+Created Satellite Model sat_table14
+Failed to generate the Standard Link Support_.._Object14: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object14: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object14: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table14
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object14: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Support_.._Object15: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table15
+Created Satellite Model sat_table15
+Failed to generate the Standard Link Support_.._Object15: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object15: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object15: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table15
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object15: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table16
+Created Satellite Model sat_table16
+Failed to generate the Standard Link Support_.._Object16: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object16: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object16: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table16
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object16: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table17
+Created Satellite Model sat_table17
+Failed to generate the Standard Link CRM_.._Object17: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link CRM_.._Object17: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time CRM_.._Object17: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table17
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite CRM_.._Object17: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table18
+Created Satellite Model sat_table18
+Failed to generate the Standard Link Billing_.._Object18: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Billing_.._Object18: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Billing_.._Object18: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table18
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Billing_.._Object18: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub ERP_.._Object19: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table19
+Created Satellite Model sat_table19
+Failed to generate the Standard Link ERP_.._Object19: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object19: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object19: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table19
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object19: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table20
+Created Satellite Model sat_table20
+Failed to generate the Standard Link Support_.._Object20: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object20: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object20: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table20
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object20: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table21
+Created Satellite Model sat_table21
+Failed to generate the Standard Link Support_.._Object21: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object21: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object21: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table21
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object21: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table22
+Created Satellite Model sat_table22
+Failed to generate the Standard Link Billing_.._Object22: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Billing_.._Object22: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Billing_.._Object22: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table22
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Billing_.._Object22: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Support_.._Object23: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table23
+Created Satellite Model sat_table23
+Failed to generate the Standard Link Support_.._Object23: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object23: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object23: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table23
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object23: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Billing_.._Object24: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table24
+Created Satellite Model sat_table24
+Failed to generate the Standard Link Billing_.._Object24: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Billing_.._Object24: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Billing_.._Object24: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table24
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Billing_.._Object24: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table25
+Created Satellite Model sat_table25
+Failed to generate the Standard Link ERP_.._Object25: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object25: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object25: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table25
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object25: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub Billing_.._Object26: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table26
+Created Satellite Model sat_table26
+Failed to generate the Standard Link Billing_.._Object26: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Billing_.._Object26: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Billing_.._Object26: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table26
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Billing_.._Object26: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Created Satellite Model sat0_table27
+Created Satellite Model sat_table27
+Failed to generate the Standard Link Support_.._Object27: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link Support_.._Object27: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time Support_.._Object27: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table27
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite Support_.._Object27: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub CRM_.._Object28: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table28
+Created Satellite Model sat_table28
+Failed to generate the Standard Link CRM_.._Object28: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link CRM_.._Object28: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time CRM_.._Object28: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table28
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite CRM_.._Object28: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub ERP_.._Object29: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table29
+Created Satellite Model sat_table29
+Failed to generate the Standard Link ERP_.._Object29: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object29: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object29: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table29
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object29: no such column: l.Record_Tracking_Satellite
+Failed to query columns for Stage: no such column: l.Prejoin_Extraction_Column_Name
+Failed to generate the Standard Hub ERP_.._Object30: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model sat0_table30
+Created Satellite Model sat_table30
+Failed to generate the Standard Link ERP_.._Object30: no such column: l.Target_Column_Sort_Order
+Failed to generate the Non-Historized Link ERP_.._Object30: no such column: l.Target_Column_Sort_Order
+Failed to generate the Point-in-Time ERP_.._Object30: no such column: h.Target_Primary_Key_Physical_Name
+Created Satellite Model nh_sat_table30
+Failed to query ma_satellite_list: no such column: hs.Target_Column_Physical_Name
+Failed to generate the Record Tracking Satellite ERP_.._Object30: no such column: l.Record_Tracking_Satellite
 Process successfully executed and models are ready to be used in Datavault 4dbt.
