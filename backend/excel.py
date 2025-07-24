@@ -76,10 +76,9 @@ class Excel:
             sources.gen_sources(self.data_structure)
         try:
             for self.data_structure['source'] in self.selectedSources:
-                self.data_structure['source'] = self.data_structure['source'].replace('_','_.._')
-                seperatedNameAsList = self.data_structure['source'].split('_.._')
-                self.data_structure['source_name']   = seperatedNameAsList[0]
-                self.data_structure['source_object'] = ''.join(seperatedNameAsList[1:])
+                node = self.data_structure['source']
+                self.data_structure['source_name'] = 'SRC1'
+                self.data_structure['source_object'] = node
                 generate_selected_entities.generate_selected_entities(self.todo, self.data_structure)
                 if self.Properties:
                     properties.gen_properties(self.data_structure)

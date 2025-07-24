@@ -5,7 +5,8 @@ def get_groupname(cursor,source_name,source_object):
     where Source_System = '{source_name}' and Source_Object = '{source_object}'
     LIMIT 1"""
     cursor.execute(query)
-    return cursor.fetchone()[0]
+    result = cursor.fetchone()
+    return result[0] if result else None
 
 def gen_hashed_columns(cursor, hashdiff_naming, source_name,source_object):
   
