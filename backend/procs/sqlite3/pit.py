@@ -88,7 +88,7 @@ def generate_pit(data_structure):
 
     root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     try:
-        with open(os.path.join(root, "templates", "pit_v1.txt"), "r") as f:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "pit_v1.txt"), "r") as f:
             command_tmp = f.read()
     except Exception as e:
         data_structure['print2FeedbackConsole'](message=f"Failed to load template pit_v1.txt: {e}")
@@ -115,8 +115,8 @@ def generate_pit(data_structure):
 
         #control_snap_v0
         try:
-            with open(os.path.join(root, "templates", "control_snap_v0.txt")) as f1:
-                control_snap = f1.read()
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "control_snap_v0.txt")) as f1:
+                control_snap_v0 = f1.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v0.txt: {e}")
             return
@@ -134,14 +134,14 @@ def generate_pit(data_structure):
             os.makedirs(snap_path)
 
         with open(filename_snap1, 'w') as f:
-            f.write(control_snap.expandtabs(2))
+            f.write(control_snap_v0.expandtabs(2))
 
 
 
         #control_snap_v1
         try:
-            with open(os.path.join(root, "templates", "control_snap_v1.txt")) as f1:
-                control_snap = f1.read()
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "control_snap_v1.txt")) as f1:
+                control_snap_v1 = f1.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v1.txt: {e}")
             return
@@ -159,7 +159,7 @@ def generate_pit(data_structure):
             os.makedirs(snap_path)
 
         with open(filename_snap0, 'w') as f:
-            f.write(control_snap.expandtabs(2))
+            f.write(control_snap_v1.expandtabs(2))
 
         
 

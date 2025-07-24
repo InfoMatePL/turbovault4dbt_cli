@@ -147,7 +147,7 @@ def generate_nh_link(data_structure):
 
     root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     try:
-        with open(os.path.join(root, "templates", "nh_link.txt"), "r") as f:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "nh_link.txt"), "r") as f:
             command_tmp = f.read()
     except Exception as e:
         data_structure['print2FeedbackConsole'](message=f"Failed to load template nh_link.txt: {e}")

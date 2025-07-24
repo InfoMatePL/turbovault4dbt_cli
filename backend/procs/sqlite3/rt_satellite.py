@@ -83,9 +83,8 @@ def generate_rt_satellite(data_structure):
                 cursor.execute(query2)
                 result = cursor.fetchone()
                 sources = sources + f"\n\tstg_{result[0].lower()}:\n\t\trsrc_static: '{result[1]}'"
-            root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             try:
-                with open(os.path.join(root, "templates", "record_tracking_sat.txt"), "r") as f:
+                with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "record_tracking_sat.txt"), "r") as f:
                     command_tmp = f.read()
             except Exception as e:
                 data_structure['print2FeedbackConsole'](message=f"Failed to load template record_tracking_sat.txt: {e}")

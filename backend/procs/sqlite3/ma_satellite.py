@@ -65,9 +65,8 @@ def generate_ma_satellite(data_structure):
         
         
         #Satellite_v0
-        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         try:
-            with open(os.path.join(root, "templates", "ma_sat_v0.txt"), "r") as f:
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ma_sat_v0.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ma_sat_v0.txt: {e}")
@@ -98,7 +97,7 @@ def generate_ma_satellite(data_structure):
 
         #Satellite_v1
         try:
-            with open(os.path.join(root, "templates", "ma_sat_v1.txt"), "r") as f:
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ma_sat_v1.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ma_sat_v1.txt: {e}")

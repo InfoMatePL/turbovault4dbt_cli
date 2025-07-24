@@ -105,7 +105,7 @@ def generate_link(data_structure):
 
     root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     try:
-        with open(os.path.join(root, "templates", "link.txt"), "r") as f:
+        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "link.txt"), "r") as f:
             command_tmp = f.read()
     except Exception as e:
         data_structure['print2FeedbackConsole'](message=f"Failed to load template link.txt: {e}")

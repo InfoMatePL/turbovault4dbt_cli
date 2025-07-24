@@ -111,9 +111,8 @@ def generate_hub(data_structure):
         source_models = generate_source_models(cursor, hub_id)
         hashkey = generate_hashkey(cursor, hub_id)
     
-        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         try:
-            with open(os.path.join(root, "templates", "hub.txt"), "r") as f:
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "hub.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template hub.txt: {e}")

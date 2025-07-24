@@ -143,7 +143,7 @@ def generate_ref(data_structure):
             historized = f"snapshot'\nsnapshot_relation:'{historized}"
         root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
         try:
-            with open(os.path.join(root, "templates", "ref_table.txt"), "r") as f:
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_table.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_table.txt: {e}")
@@ -190,7 +190,7 @@ def generate_ref(data_structure):
                 
         root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         try:
-            with open(os.path.join(root, "templates", "ref_hub.txt"), "r") as f:
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_hub.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_hub.txt: {e}")
@@ -220,7 +220,7 @@ def generate_ref(data_structure):
         #Satellite v0
         root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         try:
-            with open(os.path.join(root, "templates", "ref_sat_v0.txt"), "r") as f:
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_sat_v0.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_sat_v0.txt: {e}")
@@ -261,7 +261,7 @@ def generate_ref(data_structure):
             #Satellite_v1
             root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
             try:
-                with open(os.path.join(root, "templates", "ref_sat_v1.txt"), "r") as f:
+                with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_sat_v1.txt"), "r") as f:
                     command_tmp = f.read()
             except Exception as e:
                 data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_sat_v1.txt: {e}")

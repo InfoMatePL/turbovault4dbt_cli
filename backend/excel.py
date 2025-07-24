@@ -77,7 +77,16 @@ class Excel:
         try:
             for self.data_structure['source'] in self.selectedSources:
                 node = self.data_structure['source']
-                self.data_structure['source_name'] = 'SRC1'
+                # Dynamically look up source_name from source_data
+                cursor = self.data_structure['cursor']
+                query = f"SELECT SOURCE_SYSTEM FROM source_data WHERE SOURCE_OBJECT = '{node}' LIMIT 1"
+                cursor.execute(query)
+                result = cursor.fetchone()
+                if result:
+                    self.data_structure['source_name'] = result[0]
+                else:
+                    self.data_structure['print2FeedbackConsole'](f"Warning: SOURCE_SYSTEM not found for node '{node}'. Skipping.")
+                    continue
                 self.data_structure['source_object'] = node
                 generate_selected_entities.generate_selected_entities(self.todo, self.data_structure)
                 if self.Properties:

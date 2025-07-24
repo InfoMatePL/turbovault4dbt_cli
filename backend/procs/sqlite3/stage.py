@@ -209,6 +209,10 @@ def generate_stage(data_structure):
   cursor.execute(query)
   sources = cursor.fetchall()
 
+  if not sources:
+    data_structure['print2FeedbackConsole'](message=f"No source_data found for Source_System='{source_name}' and Source_Object='{source_object}'. Skipping stage generation.")
+    return
+
   for row in sources: #sources usually only has one row
     source_schema_name = row[0]
     source_table_name = row[1]  
@@ -218,7 +222,7 @@ def generate_stage(data_structure):
 
   root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
   try:
-    with open(os.path.join(root, "templates", "stage.txt"), "r") as f:
+    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "stage.txt"), "r") as f:
       command_tmp = f.read()
   except Exception as e:
     data_structure['print2FeedbackConsole'](message=f"Failed to load template stage.txt: {e}")

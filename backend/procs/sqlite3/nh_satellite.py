@@ -57,7 +57,7 @@ def generate_nh_satellite(data_structure):
         model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
         root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         try:
-            with open(os.path.join(root, "templates", "nh_sat.txt"), "r") as f:
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "nh_sat.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template nh_sat.txt: {e}")
