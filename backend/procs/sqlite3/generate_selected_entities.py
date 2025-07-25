@@ -1,14 +1,14 @@
-from backend.procs.sqlite3 import properties
-from backend.procs.sqlite3 import stage
-from backend.procs.sqlite3 import satellite
-from backend.procs.sqlite3 import hub
-from backend.procs.sqlite3 import link
-from backend.procs.sqlite3 import pit
-from backend.procs.sqlite3 import nh_satellite
-from backend.procs.sqlite3 import ma_satellite
-from backend.procs.sqlite3 import rt_satellite
-from backend.procs.sqlite3 import nh_link
-from backend.procs.sqlite3 import ref
+from turbovault4dbt_cli.backend.procs.sqlite3 import properties
+from turbovault4dbt_cli.backend.procs.sqlite3 import stage
+from turbovault4dbt_cli.backend.procs.sqlite3 import satellite
+from turbovault4dbt_cli.backend.procs.sqlite3 import hub
+from turbovault4dbt_cli.backend.procs.sqlite3 import link
+from turbovault4dbt_cli.backend.procs.sqlite3 import pit
+from turbovault4dbt_cli.backend.procs.sqlite3 import nh_satellite
+from turbovault4dbt_cli.backend.procs.sqlite3 import ma_satellite
+from turbovault4dbt_cli.backend.procs.sqlite3 import rt_satellite
+from turbovault4dbt_cli.backend.procs.sqlite3 import nh_link
+from turbovault4dbt_cli.backend.procs.sqlite3 import ref
 
 task_proc_mapping = {
     'Properties': properties.gen_properties,

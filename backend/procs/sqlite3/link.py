@@ -1,6 +1,6 @@
 import os
 
-from backend.procs.sqlite3.hub import generate_source_models
+from turbovault4dbt_cli.backend.procs.sqlite3.hub import generate_source_models
 
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT GROUP_NAME from standard_link where Link_Identifier = '{object_id}' ORDER BY Target_Column_Sort_Order LIMIT 1"""

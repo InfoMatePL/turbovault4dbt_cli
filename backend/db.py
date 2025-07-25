@@ -1,11 +1,11 @@
 import os
-from backend.procs.sqlite3 import generate_selected_entities, sources, generate_erd
+from turbovault4dbt_cli.backend.procs.sqlite3 import generate_selected_entities, sources, generate_erd
 from logging import Logger
 import sqlite3
 import pandas as pd
 from datetime import datetime
 import time
-from backend.procs.sqlite3 import properties
+from turbovault4dbt_cli.backend.procs.sqlite3 import properties
 image_path = os.path.join(os.path.dirname(__file__),"images")
 log = Logger('log')
 

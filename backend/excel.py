@@ -2,8 +2,8 @@ import os
 import sqlite3
 import pandas as pd
 from datetime              import datetime
-from backend.procs.sqlite3 import generate_selected_entities, sources, generate_erd
-from backend.procs.sqlite3 import properties
+from turbovault4dbt_cli.backend.procs.sqlite3 import generate_selected_entities, sources, generate_erd
+from turbovault4dbt_cli.backend.procs.sqlite3 import properties
 
 class Excel:
     def __init__(self, **kwargs):

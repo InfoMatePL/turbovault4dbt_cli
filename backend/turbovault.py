@@ -1,8 +1,8 @@
-from backend.excel import Excel
-from backend.googleSheets import GoogleSheets
-from backend.snowflake import Snowflake
-from backend.bigquery import BigQuery
-from backend.db import DB
+from turbovault4dbt_cli.backend.excel import Excel
+from turbovault4dbt_cli.backend.googleSheets import GoogleSheets
+from turbovault4dbt_cli.backend.snowflake import Snowflake
+from turbovault4dbt_cli.backend.bigquery import BigQuery
+from turbovault4dbt_cli.backend.db import DB
 class TurboVault():
     def __init__(self, **kwargs):
         self.turboVaultconfigs = kwargs.get('turboVaultconfigs')

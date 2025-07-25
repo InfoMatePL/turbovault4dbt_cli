@@ -4,10 +4,10 @@ import gspread as gs
 import sqlite3
 import numpy as np
 from datetime              import datetime
-from backend.procs.sqlite3 import sources
-from backend.procs.sqlite3 import generate_selected_entities
-from backend.procs.sqlite3 import generate_erd
-from backend.procs.sqlite3 import properties
+from turbovault4dbt_cli.backend.procs.sqlite3 import sources
+from turbovault4dbt_cli.backend.procs.sqlite3 import generate_selected_entities
+from turbovault4dbt_cli.backend.procs.sqlite3 import generate_erd
+from turbovault4dbt_cli.backend.procs.sqlite3 import properties
 
 
 class GoogleSheets:

@@ -3,10 +3,10 @@ import sqlite3
 import snowflake.connector
 from datetime              import datetime
 from configparser          import RawConfigParser
-from backend.procs.sqlite3 import sources
-from backend.procs.sqlite3 import generate_selected_entities
-from backend.procs.sqlite3 import generate_erd
-from backend.procs.sqlite3 import properties
+from turbovault4dbt_cli.backend.procs.sqlite3 import sources
+from turbovault4dbt_cli.backend.procs.sqlite3 import generate_selected_entities
+from turbovault4dbt_cli.backend.procs.sqlite3 import generate_erd
+from turbovault4dbt_cli.backend.procs.sqlite3 import properties
 
 
 class Snowflake:

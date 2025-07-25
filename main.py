@@ -1,9 +1,9 @@
 import sys
 import os
 import argparse
-from backend.excel import Excel
-from backend.config.config import MetadataInputConfig
-from backend.graph_utils import build_dependency_graph, select_nodes
+from turbovault4dbt_cli.backend.excel import Excel
+from turbovault4dbt_cli.backend.config.config import MetadataInputConfig
+from turbovault4dbt_cli.backend.graph_utils import build_dependency_graph, select_nodes
 
 def print2FeedbackConsole(message):
     print(message)
