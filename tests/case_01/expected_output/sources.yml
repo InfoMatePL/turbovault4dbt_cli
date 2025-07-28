@@ -1,0 +1,26 @@
+version: 2
+sources:
+  - name: SRC1
+    schema: schema1
+    database: 
+    tables:
+    -  name: hub1
+    -  name: hub2
+    -  name: hub3
+    -  name: hub4
+    -  name: sat1
+    -  name: sat2
+    -  name: sat3
+    -  name: sat4
+    -  name: masat1
+    -  name: masat2
+    -  name: masat3
+    -  name: masat4
+    -  name: nhsat1
+    -  name: nhsat2
+    -  name: nhsat3
+    -  name: nhsat4
+    -  name: link1
+    -  name: link2
+    -  name: link3
+    -  name: link4
