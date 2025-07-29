@@ -9,7 +9,14 @@ CASES_DIR = os.path.dirname(__file__)
 CASE_SELECTORS = {
     'case_01': None,
     'case_02': '+sat1 hub2+ @masat3',
+    'case_03': 'hub1',
+    'case_04': '+pit2',
+    'case_05': '@sat1',
 }
+
+NEGATIVE_CASES = [
+    'fail_no_command',
+]
 
 def run_cli(input_xlsx, output_dir, selector=None):
     cmd = [
@@ -34,6 +41,11 @@ def compare_dirs(dir1, dir2):
     d for d in os.listdir(CASES_DIR) if os.path.isdir(os.path.join(CASES_DIR, d)) and d.startswith("case_")
 ])
 def test_regression(case_dir, tmp_path):
+    if case_dir in NEGATIVE_CASES:
+        # Negative test: expect CLI to fail
+        result = subprocess.run(["turbovault"], capture_output=True, text=True)
+        assert result.returncode != 0, "Expected turbovault to fail without subcommand"
+        return
     case_path = os.path.join(CASES_DIR, case_dir)
     input_xlsx = os.path.join(case_path, "input.xlsx")
     expected_output = os.path.join(case_path, "expected_output")
