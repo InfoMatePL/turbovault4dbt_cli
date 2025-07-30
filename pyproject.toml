@@ -1,0 +1,15 @@
+[project]
+name = "turbovault4dbt"
+version = "0.1.0"
+description = "CLI for Turbovault 4 DBT"
+authors = [
+    { name = "Your Name", email = "your@email.com" }
+]
+readme = "README.md"
+requires-python = ">=3.8"
+
+[project.scripts]
+turbovault = "turbovault4dbt.main:main"
+
+[tool.setuptools]
+package-dir = {"" = "src"} 
