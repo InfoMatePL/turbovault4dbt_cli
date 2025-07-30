@@ -26,6 +26,19 @@ TurboVault4dbt_cli is an open-source CLI tool that automatically generates dbt m
 
 ---
 
+## How does my metadata needs to look like?
+Your metadata needs to be stored in the following tables/worksheets: 
+- [Source Data](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/source-data)
+- [Standard Hubs](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/hubs)
+- [Standard Links](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/links)
+- [Non-Historized Links](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/non-Historized-links)
+- [Standard Satellites](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/standard-satellites)
+- [Non-Historized Satellites](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/non-Historized-satellites)
+- [Multi-Active Satellites](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/multiactive-satellites)
+- [Point-In-Time Tables](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/Point-In-Time)
+- [Reference Tables](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/reference-tables)
+---
+
 ## Installation (CLI Version)
 
 1. Clone this repository:
