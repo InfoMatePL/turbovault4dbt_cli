@@ -3,7 +3,8 @@ import os
 import argparse
 from turbovault4dbt.backend.excel import Excel
 from turbovault4dbt.backend.config.config import MetadataInputConfig
-from turbovault4dbt.backend.graph_utils import build_dependency_graph, select_nodes
+from turbovault4dbt.backend.graph_utils import build_dependency_graph, select_nodes, print_graph
+import turbovault4dbt.debuowanie as debugowanie
 
 def print2FeedbackConsole(message):
     print(message)
@@ -49,31 +50,49 @@ def main():
     G, selected_nodes, excel_config = resolve_graph_and_nodes(args.file, args.select)
 
     if args.command == 'list':
-        print("Resolved nodes:")
-        for node in sorted(selected_nodes):
+        print("All nodes resolved by selectors:")
+        for node in selected_nodes:
             print(f"  {node}")
         return
 
     if args.command == 'run':
         print("Selected nodes for processing:")
-        for node in sorted(selected_nodes):
+        for node in selected_nodes:
             print(f"  {node}")
-        sources_to_process = [n for n in selected_nodes if G.nodes[n].get('type') in {'hub','link','satellite','ma_satellite','nh_satellite','pit'}]
+
+        # Map node types to generator tasks
+        type_to_task = {
+            'hub': 'Standard Hub',
+            'satellite': 'Standard Satellite',
+            'link': 'Standard Link',
+            'nh_satellite': 'Non-Historized Satellite',
+            'ma_satellite': 'Multi-Active Satellite',
+            'pit': 'Point-in-Time',
+            'stage': 'Stage'
+        }
+
+        # Build tasks and sources from selected nodes
+        tasks = set()
+        sources_to_process = []
+        for node in selected_nodes:
+            ntype = G.nodes[node].get('type')
+            if ntype in type_to_task:
+                tasks.add(type_to_task[ntype])
+                sources_to_process.append(node)
+
         if not sources_to_process:
             print("No valid sources/entities selected for code generation.")
             sys.exit(0)
+
         # Set output directory if provided
         if args.output_dir:
             excel_config['output_dir'] = args.output_dir
+
         excel_processor = Excel(turboVaultconfigs=excel_config, print2FeedbackConsole=print2FeedbackConsole)
         excel_processor.read()
         excel_processor.setTODO(
-            SourceYML=True,  # Enable sources.yml generation
-            Tasks=[
-                'Stage', 'Standard Hub', 'Standard Satellite', 'Standard Link',
-                'Non-Historized Link', 'Point-in-Time', 'Non-Historized Satellite',
-                'Multi-Active Satellite', 'Record Tracking Satellite'
-            ],
+            SourceYML=True,
+            Tasks=list(tasks),
             DBDocs=False,
             Properties=False,
             Sources=sources_to_process

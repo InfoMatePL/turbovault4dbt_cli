@@ -82,3 +82,5 @@ Thumbs.db
 # Ignore old venvs
 /tvdb-venv/
 /VenTurboVault/
+
+debugowanie.py

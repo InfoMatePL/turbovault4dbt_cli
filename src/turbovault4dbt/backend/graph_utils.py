@@ -6,16 +6,17 @@ Graph Utilities for Data Vault Metadata
 - Build a dependency graph from Excel metadata
 - Support dbt-style selectors: +X, X+, @X
 """
-
 def build_dependency_graph(excel_path):
     """
     Build a directed graph from the Excel metadata file.
-    Nodes: All objects (hubs, links, satellites, etc.)
-    Edges: Parent-child relationships (e.g., satellites -> hubs/links)
+    Nodes: All objects (stages, hubs, links, satellites, etc.)
+    Edges: Parent-child relationships (e.g., satellites -> hubs/links, hub <- stage)
     Returns: networkx.DiGraph
     """
     xl = pd.ExcelFile(excel_path)
     G = nx.DiGraph()
+    #DEBUG
+    #print(xl.sheet_names, "\n", G)
 
     # Helper: add node with type
     def add_node(name, ntype, attrs=None):
@@ -23,15 +24,39 @@ def build_dependency_graph(excel_path):
             attrs = {}
         G.add_node(name, type=ntype, **attrs)
 
-    # Hubs
+    ### 1. Stage (new: must appear *before* Hubs and Links to ensure edges are built)
+    # We'll try to build a stage for each hub and link.
+    stages_added = set()
+    if 'standard_hub' in xl.sheet_names:
+        df = xl.parse('standard_hub')
+        for _, row in df.iterrows():
+            hub = row.get('Target_Hub_table_physical_name')
+            if pd.notna(hub):
+                stage_name = f"stg_{hub}"
+                add_node(stage_name, 'stage', {"source_for": hub})
+                stages_added.add((stage_name, hub))
+    if 'standard_link' in xl.sheet_names:
+        df = xl.parse('standard_link')
+        for _, row in df.iterrows():
+            link = row.get('Target_Link_table_physical_name')
+            if pd.notna(link):
+                stage_name = f"stg_{link}"
+                add_node(stage_name, 'stage', {"source_for": link})
+                stages_added.add((stage_name, link))
+
+    ### 2. Hubs
     if 'standard_hub' in xl.sheet_names:
         df = xl.parse('standard_hub')
         for _, row in df.iterrows():
             hub = row.get('Target_Hub_table_physical_name')
             if pd.notna(hub):
                 add_node(hub, 'hub', row.to_dict())
+                # Connect stage to hub
+                stage_name = f"stg_{hub}"
+                if stage_name in G:
+                    G.add_edge(stage_name, hub)
 
-    # Links
+    ### 3. Links
     if 'standard_link' in xl.sheet_names:
         df = xl.parse('standard_link')
         for _, row in df.iterrows():
@@ -42,8 +67,12 @@ def build_dependency_graph(excel_path):
                 # Link depends on parent hub(s)
                 if pd.notna(parent):
                     G.add_edge(parent, link)
+                # Connect stage to link
+                stage_name = f"stg_{link}"
+                if stage_name in G:
+                    G.add_edge(stage_name, link)
 
-    # Satellites
+    ### 4. Satellites
     if 'standard_satellite' in xl.sheet_names:
         df = xl.parse('standard_satellite')
         for _, row in df.iterrows():
@@ -54,7 +83,7 @@ def build_dependency_graph(excel_path):
                 if pd.notna(parent):
                     G.add_edge(parent, sat)
 
-    # Multi-Active Satellites
+    ### 5. Multi-Active Satellites
     if 'multiactive_satellite' in xl.sheet_names:
         df = xl.parse('multiactive_satellite')
         for _, row in df.iterrows():
@@ -65,7 +94,7 @@ def build_dependency_graph(excel_path):
                 if pd.notna(parent):
                     G.add_edge(parent, masat)
 
-    # Non-Historized Satellites
+    ### 6. Non-Historized Satellites
     if 'non_historized_satellite' in xl.sheet_names:
         df = xl.parse('non_historized_satellite')
         for _, row in df.iterrows():
@@ -76,7 +105,7 @@ def build_dependency_graph(excel_path):
                 if pd.notna(parent):
                     G.add_edge(parent, nhsat)
 
-    # Point-in-Time
+    ### 7. Point-in-Time
     if 'pit' in xl.sheet_names:
         df = xl.parse('pit')
         for _, row in df.iterrows():
@@ -89,6 +118,7 @@ def build_dependency_graph(excel_path):
 
     # Add more object types as needed...
     return G
+
 
 
 def select_nodes(G, selectors):
