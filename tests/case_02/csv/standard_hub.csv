@@ -1,0 +1,5 @@
+Hub_Identifier,Target_Hub_table_physical_name,Business_Key_Physical_Name,GROUP_NAME,Target_Role_Primary_Key_Physical_Name,Source_Table_Identifier,Is_Primary_Source,Target_Column_Sort_Order,Source_Column_Physical_Name,h_Target_Primary_Key_Physical_Name,Target_Primary_Key_Physical_Name,Record_Tracking_Satellite
+hub1_id,hub1,bk_hub1,group1,target_role_pk_hub1,stable_hub1,1,1,scol_hub1,hpk_hub1,target_pk_hub1,rts1
+hub2_id,hub2,bk_hub2,group2,target_role_pk_hub2,stable_hub2,1,2,scol_hub2,hpk_hub2,target_pk_hub2,rts1
+hub3_id,hub3,bk_hub3,group3,target_role_pk_hub3,stable_hub3,1,3,scol_hub3,hpk_hub3,target_pk_hub3,rts1
+hub4_id,hub4,bk_hub4,group1,target_role_pk_hub4,stable_hub4,1,4,scol_hub4,hpk_hub4,target_pk_hub4,rts1

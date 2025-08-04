@@ -1,0 +1,5 @@
+Pit_Identifier,Pit_Physical_Table_Name,Tracked_Entity,Snapshot_Model_Name,Snapshot_Trigger_Column,Dimension_Key_Name,Satellite_Identifiers,h_Target_Primary_Key_Physical_Name
+pit1_id,pit1,hub1,snapmod_pit1,snaptrig_pit1,dimkey_pit1,sat_hub1;sat_hub2,hpk_hub1
+pit2_id,pit2,hub2,snapmod_pit2,snaptrig_pit2,dimkey_pit2,sat_hub2;sat_hub3,hpk_hub2
+pit3_id,pit3,hub3,snapmod_pit3,snaptrig_pit3,dimkey_pit3,sat_hub3;sat_hub4,hpk_hub3
+pit4_id,pit4,hub4,snapmod_pit4,snaptrig_pit4,dimkey_pit4,sat_hub4;sat_hub1,hpk_hub4
