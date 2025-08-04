@@ -18,24 +18,26 @@ NEGATIVE_CASES = [
     'fail_no_command',
 ]
 
-def run_cli(input_xlsx, output_dir, selector=None):
-    print(f"\n[run_cli] INPUT: {input_xlsx}")
+def run_cli(input_path, output_dir, selector=None, input_format="xlsx"):
+    print(f"\n[run_cli] INPUT: {input_path}")
+    print(f"[run_cli] FORMAT: {input_format}")
     print(f"[run_cli] OUTPUT DIR: {output_dir}")
     print(f"[run_cli] SELECTOR: {selector}")
     cmd = [
         "turbovault", "run",
-        "--file", input_xlsx,
+        "-f", input_format, input_path,
         "--output-dir", output_dir
     ]
     if selector:
         cmd += ["-s"] + selector.split()
     print(f"[run_cli] CMD: {' '.join(cmd)}")
     env = os.environ.copy()
-    result = subprocess.run(cmd, cwd=os.path.dirname(input_xlsx), env=env, capture_output=True, text=True)
+    result = subprocess.run(cmd, cwd=os.path.dirname(input_path), env=env, capture_output=True, text=True)
     print(f"[run_cli] CLI STDOUT:\n{result.stdout}")
     print(f"[run_cli] CLI STDERR:\n{result.stderr}")
     print(f"[run_cli] FILES GENERATED: {os.listdir(output_dir)}")
     assert result.returncode == 0, f"CLI failed: {result.stderr}\n{result.stdout}"
+
 
 def compare_dirs(dir1, dir2):
     print(f"\n[compare_dirs] Comparing:\n  GENERATED: {dir1}\n  EXPECTED:  {dir2}")
@@ -58,17 +60,21 @@ def compare_dirs(dir1, dir2):
 @pytest.mark.parametrize("case_dir", [
     d for d in os.listdir(CASES_DIR) if os.path.isdir(os.path.join(CASES_DIR, d)) and d.startswith("case_")
 ])
-def test_regression(case_dir, tmp_path):
+@pytest.mark.parametrize("input_format", ["xlsx", "csv"])
+def test_regression(case_dir, input_format, tmp_path):
     if case_dir in NEGATIVE_CASES:
         # Negative test: expect CLI to fail
         result = subprocess.run(["turbovault"], capture_output=True, text=True)
         assert result.returncode != 0, "Expected turbovault to fail without subcommand"
         return
     case_path = os.path.join(CASES_DIR, case_dir)
-    input_xlsx = os.path.join(case_path, "input.xlsx")
+    if input_format == "xlsx":
+        input_path = os.path.join(case_path, "input.xlsx")
+    elif input_format == "csv":
+        input_path = os.path.join(case_path, "csv")
     expected_output = os.path.join(case_path, "expected_output")
     output_dir = tmp_path / "output"
     output_dir.mkdir()
     selector = CASE_SELECTORS.get(case_dir)
-    run_cli(input_xlsx, str(output_dir), selector)
-    compare_dirs(str(output_dir), expected_output) 
+    run_cli(input_path, str(output_dir), selector, input_format)
+    compare_dirs(str(output_dir), expected_output)

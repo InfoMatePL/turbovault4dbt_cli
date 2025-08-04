@@ -1,0 +1,9 @@
+NH_Satellite_Identifier,Target_Satellite_Table_Physical_Name,Parent_Identifier,Parent_Primary_Key_Physical_Name,GROUP_NAME,Source_Table_Identifier,Target_Column_Physical_Name,Source_Column_Physical_Name,Target_Column_Sort_Order
+nhsat_hub1_id,nhsat_hub1,hub1,hpk_hub1,group1,stable_hub1,target_col_hub1,scol_hub1,1
+nhsat_hub2_id,nhsat_hub2,hub2,hpk_hub2,group2,stable_hub2,target_col_hub2,scol_hub2,2
+nhsat_hub3_id,nhsat_hub3,hub3,hpk_hub3,group3,stable_hub3,target_col_hub3,scol_hub3,3
+nhsat_hub4_id,nhsat_hub4,hub4,hpk_hub4,group1,stable_hub4,target_col_hub4,scol_hub4,4
+nhsat1_id,nhsat1,hub1,hpk_hub1,group1,stable_nhsat1,target_col_nhsat1,scol_nhsat1,1
+nhsat2_id,nhsat2,hub2,hpk_hub2,group2,stable_nhsat2,target_col_nhsat2,scol_nhsat2,2
+nhsat3_id,nhsat3,hub3,hpk_hub3,group3,stable_nhsat3,target_col_nhsat3,scol_nhsat3,3
+nhsat4_id,nhsat4,hub4,hpk_hub4,group1,stable_nhsat4,target_col_nhsat4,scol_nhsat4,4

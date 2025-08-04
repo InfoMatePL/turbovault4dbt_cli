@@ -1,0 +1,9 @@
+Satellite_Identifier,Target_Satellite_Table_Physical_Name,Parent_Identifier,Parent_Primary_Key_Physical_Name,GROUP_NAME,Source_Table_Identifier,Target_Column_Physical_Name,Target_Column_Sort_Order,Source_Column_Physical_Name
+sat_hub1_id,sat_hub1,hub1,hpk_hub1,group1,stable_hub1,target_col_hub1,1,scol_hub1
+sat_hub2_id,sat_hub2,hub2,hpk_hub2,group2,stable_hub2,target_col_hub2,2,scol_hub2
+sat_hub3_id,sat_hub3,hub3,hpk_hub3,group3,stable_hub3,target_col_hub3,3,scol_hub3
+sat_hub4_id,sat_hub4,hub4,hpk_hub4,group1,stable_hub4,target_col_hub4,4,scol_hub4
+sat1_id,sat1,hub1,hpk_hub1,group1,stable_sat1,target_col_sat1,1,scol_sat1
+sat2_id,sat2,hub2,hpk_hub2,group2,stable_sat2,target_col_sat2,2,scol_sat2
+sat3_id,sat3,hub3,hpk_hub3,group3,stable_sat3,target_col_sat3,3,scol_sat3
+sat4_id,sat4,hub4,hpk_hub4,group1,stable_sat4,target_col_sat4,4,scol_sat4
