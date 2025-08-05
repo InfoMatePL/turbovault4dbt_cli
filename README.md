@@ -50,6 +50,36 @@ git clone https://github.com/ScalefreeCOM/turbovault4dbt.git
 cd turbovault4dbt
 pip install -e .
 ```
+
+---
+
+## Publishing to PyPI
+
+1. **Build the package (inside your project directory):**
+    ```sh
+    python -m build
+    ```
+
+2. **Upload to PyPI using Twine:**
+    ```sh
+    pip install twine  # if not already installed
+    twine upload dist/*
+    ```
+
+3. **(Optional) Test upload to TestPyPI first:**
+    ```sh
+    twine upload --repository testpypi dist/*
+    ```
+
+4. **After upload, install your package from PyPI:**
+    ```sh
+    pip install turbovault4dbt
+    ```
+
+For more details, see the [official Python packaging docs](https://packaging.python.org/en/latest/tutorials/packaging-projects/).
+
+---
+
 ## Quickstart: Using the CLI
 
 ### 1. Prepare your metadata
@@ -101,7 +131,7 @@ turbovault run -f xlsx path/to/your.xlsx --output-dir my_output_dir
 To run the regression test suite:
 ```sh
 pip install -r requirements-test.txt
-pytest tests/test_regression.py
+pytest tests/
 ```
 - Add new test cases by creating folders in `tests/` with `input.xlsx` and `expected_output/`.
 - Negative test cases (expected failures) are also supported.
@@ -116,7 +146,7 @@ pytest tests/test_regression.py
 ---
 
 ## Releases
-See [GitHub Releases](https://github.com/ScalefreeCOM/turbovault4dbt/releases)
+See [PyPI Releases](https://pypi.org/project/turbovault4dbt/)
 
 ---
 
@@ -126,5 +156,5 @@ See [LICENSE](LICENSE)
 ---
 
 ## Need Help?
-- [Open an issue](https://github.com/ScalefreeCOM/turbovault4dbt/issues)
+- [Open an issue](https://github.com/InfoMatePL/turbovault4dbt_cli/issues)
 - [Wiki](https://github.com/ScalefreeCOM/turbovault4dbt/wiki)
