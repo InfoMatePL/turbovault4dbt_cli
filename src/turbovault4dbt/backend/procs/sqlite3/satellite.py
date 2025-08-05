@@ -73,8 +73,15 @@ def generate_satellite(data_structure):
             
   
         satellite_model_name_splitted_list = satellite_name.split('_')
-        satellite_model_name_splitted_list[-2] += '0'
-        satellite_model_name_v0 = '_'.join(satellite_model_name_splitted_list)
+        if len(satellite_model_name_splitted_list) >= 2:
+            satellite_model_name_splitted_list[-2] += '0'
+            satellite_model_name_v0 = '_'.join(satellite_model_name_splitted_list)
+        else:
+            satellite_model_name_v0 = satellite_name + '0'
+            data_structure['print2FeedbackConsole'](
+                message=f"Satellite name '{satellite_name}' does not have enough '_' segments, used fallback name '{satellite_model_name_v0}'"
+            )
+
 
         filename = os.path.join(model_path_v0 , f"{satellite_model_name_v0}.sql")
                 
