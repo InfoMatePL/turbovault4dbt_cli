@@ -11,23 +11,21 @@ TurboVault4dbt_cli is an open-source CLI tool that automatically generates dbt m
 
 ## Prerequisites
 - Python 3.8+
-- Metadata analysis done and stored in a supported format (see below)
+- Metadata prepared in one of the supported formats (see below)
 - [dbt project](https://docs.getdbt.com/docs/get-started/getting-started-dbt-core)
 - [datavault4dbt](https://github.com/ScalefreeCOM/datavault4dbt) dbt package
 
----
-
-## Supported Metadata Sources
-- **Snowflake**
-- **BigQuery**
-- **Google Sheets**
-- **Excel**
-- **SQLite DB Files**
 
 ---
 
-## How does my metadata needs to look like?
-Your metadata needs to be stored in the following tables/worksheets: 
+## Supported Metadata Formats  
+- **Excel files:** `.xls`, `.xlsx`
+- **CSV files:** folder of CSVs (one per sheet/table)
+
+---
+
+## How does my metadata need to look like?
+Your metadata needs to be stored in the following tables/worksheets/files: 
 - [Source Data](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/source-data)
 - [Standard Hubs](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/hubs)
 - [Standard Links](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/links)
@@ -37,55 +35,58 @@ Your metadata needs to be stored in the following tables/worksheets:
 - [Multi-Active Satellites](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/multiactive-satellites)
 - [Point-In-Time Tables](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/Point-In-Time)
 - [Reference Tables](https://github.com/ScalefreeCOM/turbovault4dbt/wiki/reference-tables)
----
-
-## Installation (CLI Version)
-
-1. Clone this repository:
-   ```sh
-   git clone https://github.com/ScalefreeCOM/turbovault4dbt.git
-   cd turbovault4dbt
-   ```
-2. (Recommended) Create and activate a virtual environment:
-   ```sh
-   python3 -m venv turbovault-env
-   source turbovault-env/bin/activate
-   ```
-3. Install in editable mode:
-   ```sh
-   pip install -e .
-   ```
 
 ---
 
+## Installation
+
+You can install TurboVault4dbt_cli directly from PyPI:
+```sh
+pip install turbovault4dbt
+```
+Or install from source for development:
+```sh
+git clone https://github.com/ScalefreeCOM/turbovault4dbt.git
+cd turbovault4dbt
+pip install -e .
+```
 ## Quickstart: Using the CLI
 
 ### 1. Prepare your metadata
-- See [metadata_ddl/](metadata_ddl/) for DDL scripts and Excel templates.
-- Configure your metadata connection in `src/turbovault4dbt/backend/config/config.ini`.
+- Prepare your metadata as Excel (`.xls` or `.xlsx`) or as a folder of CSV files (one CSV per sheet/table, filenames matching required sheets).
+- (See [metadata_ddl/](metadata_ddl/) for example templates.)
 
 ### 2. Run TurboVault4dbt_cli
 
 #### Basic usage:
 ```sh
-# List available nodes from your metadata Excel file
-$ turbovault list --file path/to/your.xlsx
+# List all nodes in your metadata (Excel or CSV)
+turbovault list -f xlsx path/to/your.xlsx
+turbovault list -f csv path/to/your_csv_folder
+
+# Generate dbt models for all nodes
+turbovault run -f xlsx path/to/your.xlsx
+turbovault run -f csv path/to/your_csv_folder
 
 # Generate dbt models for selected nodes
-$ turbovault run --file path/to/your.xlsx -s hub1
-
-# Use selectors (e.g., +node, node+, @node)
-$ turbovault run --file path/to/your.xlsx -s '+sat1 hub2+ @masat3'
+turbovault run -f xlsx path/to/your.xlsx -s hub1 link1 sat1
+turbovault run -f csv path/to/your_csv_folder -s '+hub1' '@sat1'
 
 # Specify output directory
-$ turbovault run --file path/to/your.xlsx --output-dir my_output_dir -s hub1
+turbovault run -f xlsx path/to/your.xlsx --output-dir my_output_dir
 ```
-
 #### Command reference:
-- `turbovault run --file <input.xlsx> [-s <selector>] [--output-dir <dir>]`  
-  Generate dbt models for selected nodes.
-- `turbovault list --file <input.xlsx> [-s <selector>]`  
+- `turbovault run -f {xls|xlsx|csv} <input> [-s <selectors>] [--output-dir <dir>]`  
+  Generate dbt models for all or selected nodes.
+- `turbovault list -f {xls|xlsx|csv} <input> [-s <selectors>]`  
   List resolved nodes for a selector (dry run).
+
+#### Arguments:
+- `-f, --format`: Input format. Must be one of: `xls`, `xlsx`, `csv`
+- `input`: Path to Excel file (`.xls`/`.xlsx`) or folder containing CSV files (for `csv`)
+- `-s, --select`: (Optional) Node selectors (space-separated).  
+   Examples: `hub1`, `+sat1`, `hub2+`, `@masat3`
+- `--output-dir`: (Optional) Output directory for generated files
 
 #### Selector syntax:
 - `A+` — node A and all descendants
