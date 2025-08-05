@@ -92,11 +92,14 @@ def main():
 
         tasks = set()
         sources_to_process = []
+        valid_types_for_source_data = ['hub', 'satellite', 'link', 'ma_satellite', 'nh_satellite']
+
         for node in selected_nodes:
             ntype = G.nodes[node].get('type')
             if ntype in type_to_task:
                 tasks.add(type_to_task[ntype])
-                sources_to_process.append(node)
+                if ntype in valid_types_for_source_data and '_hub' not in node:
+                    sources_to_process.append(node)
 
         if not sources_to_process:
             print("No valid sources/entities selected for code generation.")
