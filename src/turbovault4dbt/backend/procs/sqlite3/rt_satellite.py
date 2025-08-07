@@ -1,4 +1,6 @@
 import os
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
+
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT GROUP_NAME,Is_Primary_Source
     from standard_hub 
@@ -67,7 +69,24 @@ def generate_rt_satellite(data_structure):
 
 
         group_name = 'RDV/' + get_groupname(cursor,object[0])
-        model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
+        # --- Query for output_dir for this RT satellite (from hub or link) ---
+        # Try hub first
+        cursor.execute(
+            "SELECT output_dir FROM standard_hub WHERE Hub_Identifier = ? LIMIT 1",
+            (object[0],)
+        )
+        result = cursor.fetchone()
+        output_dir = result[0] if result and result[0] else ""
+        # If not found, try link
+        if not output_dir:
+            cursor.execute(
+                "SELECT output_dir FROM standard_link WHERE Link_Identifier = ? LIMIT 1",
+                (object[0],)
+            )
+            result = cursor.fetchone()
+            output_dir = result[0] if result and result[0] else ""
+
+        model_path_replaced = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
 
         for rt_sat in results:
             tracked_hk = rt_sat[0]
@@ -83,26 +102,28 @@ def generate_rt_satellite(data_structure):
                 cursor.execute(query2)
                 result = cursor.fetchone()
                 sources = sources + f"\n\tstg_{result[0].lower()}:\n\t\trsrc_static: '{result[1]}'"
+
             try:
                 with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "record_tracking_sat.txt"), "r") as f:
                     command_tmp = f.read()
             except Exception as e:
                 data_structure['print2FeedbackConsole'](message=f"Failed to load template record_tracking_sat.txt: {e}")
                 return
-            f.close()
             command = command_tmp.replace('@@Schema', rdv_default_schema).replace('@@Tracked_HK', tracked_hk).replace('@@Source_Models', sources)
 
-            filename = os.path.join(model_path , f"{tracked_entity}_rts.sql")
-                    
-            # Check whether the specified path exists or not
-            isExist = os.path.exists(model_path)
+            # --- Build the full output directory ---
+            if output_dir:
+                output_dir = sanitize_output_dir(output_dir)
+                full_model_path = os.path.join(model_path_replaced, output_dir)
+            else:
+                full_model_path = model_path_replaced
+            filename = os.path.join(full_model_path, f"{tracked_entity}_rts.sql")
 
-            if not isExist:   
-            # Create a new directory because it does not exist 
-                os.makedirs(model_path)
+            # --- Ensure the directory exists ---
+            if not os.path.exists(full_model_path):
+                os.makedirs(full_model_path)
 
             with open(filename, 'w') as f:
                 f.write(command.expandtabs(2))
                 if data_structure['console_outputs']:
-                    data_structure['print2FeedbackConsole'](message= f"Created Record Tracking Satellite {tracked_entity}_rts") 
-           
+                    data_structure['print2FeedbackConsole'](message= f"Created Record Tracking Satellite {tracked_entity}_rts")

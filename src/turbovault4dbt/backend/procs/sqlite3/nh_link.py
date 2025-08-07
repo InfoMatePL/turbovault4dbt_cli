@@ -1,6 +1,8 @@
 import os
 
 from turbovault4dbt.backend.procs.sqlite3.hub import generate_source_models
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
+
 
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT GROUP_NAME from non_historized_link where NH_Link_Identifier = '{object_id}' ORDER BY Target_Column_Sort_Order LIMIT 1"""
@@ -129,43 +131,50 @@ def generate_nh_link(data_structure):
   link_list = generate_link_list(cursor=cursor, source=source, source_name= source_name, source_object= source_object)
 
   for link in link_list:
-    
     link_name = link[1]
     link_id = link[0]
     fk_list = link[2].split(',')
 
     fk_string = ""
     for fk in fk_list:
-      fk_string += f"\n\t- '{fk}'"
+        fk_string += f"\n\t- '{fk}'"
 
-    source_models,target_payload = generate_source_models(cursor, link_id)
+    source_models, target_payload = generate_source_models(cursor, link_id)
     link_hashkey = generate_link_hashkey(cursor, link_id)
-    group_name = 'RDV/' + get_groupname(cursor,link_id)
-    model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
+    group_name = 'RDV/' + get_groupname(cursor, link_id)
+    # Replace tokens in model_path
+    base_model_path = model_path.replace('@@GroupName', group_name).replace('@@SourceSystem', source_name).replace('@@timestamp', generated_timestamp)
+
+    # --- Query for output_dir for this NH link ---
+    if has_column(cursor, "non_historized_link", "output_dir"):
+        cursor.execute("SELECT output_dir FROM non_historized_link WHERE NH_Link_Identifier = ? LIMIT 1", (link_id,))
+        result = cursor.fetchone()
+        output_dir = result[0] if result and result[0] else ""
+    else:
+        output_dir = ""
 
 
+    # --- Build the full output directory ---
+    if output_dir:
+        output_dir = sanitize_output_dir(output_dir)
+        full_model_path = os.path.join(base_model_path, output_dir)
+    else:
+        full_model_path = base_model_path
+    filename = os.path.join(full_model_path, f"{link_name}.sql")
 
-    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    # --- Ensure the directory exists ---
+    if not os.path.exists(full_model_path):
+        os.makedirs(full_model_path)
+
     try:
         with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "nh_link.txt"), "r") as f:
             command_tmp = f.read()
     except Exception as e:
         data_structure['print2FeedbackConsole'](message=f"Failed to load template nh_link.txt: {e}")
         return
-    f.close()
-    command = command_tmp.replace('@@Schema', rdv_default_schema).replace('@@SourceModels', source_models).replace('@@LinkHashkey', link_hashkey).replace('@@ForeignHashkeys', fk_string).replace('@@Payload',target_payload)
-
-
-    filename = os.path.join(model_path , f"{link_name}.sql")
-            
-    # Check whether the specified path exists or not
-    isExist = os.path.exists(model_path)
-
-    if not isExist:   
-    # Create a new directory because it does not exist 
-      os.makedirs(model_path)
+    command = command_tmp.replace('@@Schema', rdv_default_schema).replace('@@SourceModels', source_models).replace('@@LinkHashkey', link_hashkey).replace('@@ForeignHashkeys', fk_string).replace('@@Payload', target_payload)
 
     with open(filename, 'w') as f:
-      f.write(command.expandtabs(2))
-      if data_structure['console_outputs']:
-        data_structure['print2FeedbackConsole'](message= f"Created Link Model {link_name}")
+        f.write(command.expandtabs(2))
+        if data_structure['console_outputs']:
+            data_structure['print2FeedbackConsole'](message=f"Created Link Model {link_name}")

@@ -1,4 +1,6 @@
 import os
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
+
 
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT GROUP_NAME from pit where Pit_Identifier = '{object_id}' LIMIT 1"""
@@ -77,89 +79,73 @@ def generate_pit(data_structure):
         snapshot_trigger_column = pit[6]
         dimension_key_name = pit[7]
         sat_ids = satellites.split(';')
-        sat_names = get_sat_names(cursor = cursor,sat_ids = sat_ids)
-        group_name = 'BDV/' + get_groupname(cursor,pit[0])
-        model_path_v1 = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
-        model_path_control = model_path.replace('@@GroupName','control').replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
-    all_satellite_names = ''
-    for sat in sat_names:
-        all_satellite_names += f"\n\t- {sat}"
+        sat_names = get_sat_names(cursor=cursor, sat_ids=sat_ids)
+        group_name = 'BDV/' + get_groupname(cursor, pit[0])
+
+        # --- Query for output_dir for this PIT ---
+        if has_column(cursor, "pit", "output_dir"):
+            cursor.execute("SELECT output_dir FROM pit WHERE Pit_Identifier = ? LIMIT 1", (pit[0],))
+            result = cursor.fetchone()
+            output_dir = result[0] if result and result[0] else ""
+        else:
+            output_dir = ""
 
 
-    root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-    try:
-        with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "pit_v1.txt"), "r") as f:
-            command_tmp = f.read()
-    except Exception as e:
-        data_structure['print2FeedbackConsole'](message=f"Failed to load template pit_v1.txt: {e}")
-        return
-    f.close()
-    command = command_tmp.replace('@@TrackedEntity', tracked_entity).replace('@@PK', pk).replace('@@SnapshotModelName', snapshot_model_name).replace('@@SnapshotTriggerColumn', snapshot_trigger_column).replace('@@DimensionKey',dimension_key_name).replace('@@SatNames',all_satellite_names)
-    
-    if sat_names != '':
-        filename = os.path.join(model_path_v1 , f"{pit_name}.sql")
-                
-        path = os.path.join(model_path_v1)
+        # --- Build the full output directory for PIT model ---
+        base_model_path_v1 = model_path.replace('@@GroupName', group_name).replace('@@SourceSystem', source_name).replace('@@timestamp', generated_timestamp)
+        if output_dir:
+            output_dir = sanitize_output_dir(output_dir)
+            full_model_path_v1 = os.path.join(base_model_path_v1, output_dir)
+        else:
+            full_model_path_v1 = base_model_path_v1
 
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(path)
+        all_satellite_names = ''
+        for sat in sat_names:
+            all_satellite_names += f"\n\t- {sat}"
 
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(path)
-
-        with open(filename, 'w') as f:
-            f.write(command.expandtabs(2))
-        if data_structure['console_outputs']:
-            data_structure['print2FeedbackConsole'](message= f"Created Pit Model {pit_name}")
-
-        #control_snap_v0
         try:
-            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "control_snap_v0.txt")) as f1:
-                control_snap_v0 = f1.read()
+            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "pit_v1.txt"), "r") as f:
+                command_tmp = f.read()
         except Exception as e:
-            data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v0.txt: {e}")
+            data_structure['print2FeedbackConsole'](message=f"Failed to load template pit_v1.txt: {e}")
             return
-        f1.close()
+        command = command_tmp.replace('@@TrackedEntity', tracked_entity).replace('@@PK', pk).replace('@@SnapshotModelName', snapshot_model_name).replace('@@SnapshotTriggerColumn', snapshot_trigger_column).replace('@@DimensionKey', dimension_key_name).replace('@@SatNames', all_satellite_names)
 
-        filename_snap1 = os.path.join(model_path_control , f"control_snap_v0.sql")
-                
-        snap_path = os.path.join(model_path_control)
+        if sat_names != '':
+            filename = os.path.join(full_model_path_v1, f"{pit_name}.sql")
+            if not os.path.exists(full_model_path_v1):
+                os.makedirs(full_model_path_v1)
+            with open(filename, 'w') as f:
+                f.write(command.expandtabs(2))
+            if data_structure['console_outputs']:
+                data_structure['print2FeedbackConsole'](message=f"Created Pit Model {pit_name}")
 
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(snap_path)
+            # --- Control Snapshots (unchanged, but you can add similar output_dir logic if needed) ---
+            # control_snap_v0
+            try:
+                with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "control_snap_v0.txt")) as f1:
+                    control_snap_v0 = f1.read()
+            except Exception as e:
+                data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v0.txt: {e}")
+                return
+            filename_snap1 = os.path.join(model_path_control, f"control_snap_v0.sql")
+            if not os.path.exists(model_path_control):
+                os.makedirs(model_path_control)
+            with open(filename_snap1, 'w') as f:
+                f.write(control_snap_v0.expandtabs(2))
 
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(snap_path)
+            # control_snap_v1
+            try:
+                with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "control_snap_v1.txt")) as f1:
+                    control_snap_v1 = f1.read()
+            except Exception as e:
+                data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v1.txt: {e}")
+                return
+            filename_snap0 = os.path.join(model_path_control, f"control_snap_v1.sql")
+            if not os.path.exists(model_path_control):
+                os.makedirs(model_path_control)
+            with open(filename_snap0, 'w') as f:
+                f.write(control_snap_v1.expandtabs(2))
 
-        with open(filename_snap1, 'w') as f:
-            f.write(control_snap_v0.expandtabs(2))
 
-
-
-        #control_snap_v1
-        try:
-            with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "control_snap_v1.txt")) as f1:
-                control_snap_v1 = f1.read()
-        except Exception as e:
-            data_structure['print2FeedbackConsole'](message=f"Failed to load template control_snap_v1.txt: {e}")
-            return
-        f1.close()
-
-        filename_snap0 = os.path.join(model_path_control , f"control_snap_v1.sql")
-                
-        snap_path = os.path.join(model_path_control)
-
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(snap_path)
-
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(snap_path)
-
-        with open(filename_snap0, 'w') as f:
-            f.write(control_snap_v1.expandtabs(2))
-
-        
 

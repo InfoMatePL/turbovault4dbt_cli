@@ -1,5 +1,7 @@
 from numpy import object_
 import os
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
+
 
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT GROUP_NAME from non_historized_satellite where NH_Satellite_Identifier = '{object_id}' ORDER BY Target_Column_Physical_Name LIMIT 1"""
@@ -52,29 +54,40 @@ def generate_nh_satellite(data_structure):
         loaddate = nh_satellite[5]
 
         payload = gen_payload(payload_list)
-        group_name = 'RDV/' + get_groupname(cursor,nh_satellite[0])
-        
-        model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
-        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        group_name = 'RDV/' + get_groupname(cursor, nh_satellite[0])
+
+        # --- Query for output_dir for this NH satellite ---
+        if has_column(cursor, "non_historized_satellite", "output_dir"):
+            cursor.execute("SELECT output_dir FROM non_historized_satellite WHERE NH_Satellite_Identifier = ? LIMIT 1", (nh_satellite[0],))
+            result = cursor.fetchone()
+            output_dir = result[0] if result and result[0] else ""
+        else:
+            output_dir = ""
+
+
+        # --- Build the full output directory ---
+        base_model_path = model_path.replace('@@GroupName', group_name).replace('@@SourceSystem', source_name).replace('@@timestamp', generated_timestamp)
+        if output_dir:
+            output_dir = sanitize_output_dir(output_dir)
+            full_model_path = os.path.join(base_model_path, output_dir)
+        else:
+            full_model_path = base_model_path
+
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "nh_sat.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template nh_sat.txt: {e}")
             return
-        f.close()
         command = command_tmp.replace('@@SourceModel', source_model).replace('@@Hashkey', hashkey_column).replace('@@Payload', payload).replace('@@LoadDate', loaddate).replace('@@Schema', rdv_default_schema)
 
-        filename = os.path.join(model_path , f"{nh_satellite_name}.sql")
-                
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(model_path)
+        filename = os.path.join(full_model_path, f"{nh_satellite_name}.sql")
 
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(model_path)
+        # --- Ensure the directory exists ---
+        if not os.path.exists(full_model_path):
+            os.makedirs(full_model_path)
 
         with open(filename, 'w') as f:
             f.write(command.expandtabs(2))
             if data_structure['console_outputs']:
-                data_structure['print2FeedbackConsole'](message= f"Created Satellite Model {nh_satellite_name}")
+                data_structure['print2FeedbackConsole'](message=f"Created Satellite Model {nh_satellite_name}")

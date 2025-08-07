@@ -1,5 +1,7 @@
 from numpy import object_
 import os
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
+
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT GROUP_NAME from standard_satellite where Satellite_Identifier = '{object_id}' ORDER BY Target_Column_Sort_Order LIMIT 1"""
     cursor.execute(query)
@@ -56,22 +58,35 @@ def generate_satellite(data_structure):
         source_model = 'stg_'+satellite[4].lower()
         loaddate = satellite[5]
         group_name = 'RDV/' + get_groupname(cursor,satellite[0])
-        model_path_v0 = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
-        model_path_v1 = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
+
+        # --- Query for output_dir for this satellite ---
+        if has_column(cursor, "standard_satellite", "output_dir"):
+            cursor.execute("SELECT output_dir FROM standard_satellite WHERE Satellite_Identifier = ? LIMIT 1", (satellite[0],))
+            result = cursor.fetchone()
+            output_dir = result[0] if result and result[0] else ""
+        else:
+            output_dir = ""
+
+
+        # --- Build the full output directory for v0 and v1 ---
+        base_model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
+        if output_dir:
+            output_dir = sanitize_output_dir(output_dir)
+            full_model_path = os.path.join(base_model_path, output_dir)
+        else:
+            full_model_path = base_model_path
 
         payload = gen_payload(payload_list)
-        
-        #Satellite_v0
+
+        # Satellite_v0
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "sat_v0.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template sat_v0.txt: {e}")
             return
-        f.close()
         command_v0 = command_tmp.replace('@@SourceModel', source_model).replace('@@Hashkey', hashkey_column).replace('@@Hashdiff', hashdiff_column).replace('@@Payload', payload).replace('@@LoadDate', loaddate).replace('@@Schema', rdv_default_schema)
-            
-  
+
         satellite_model_name_splitted_list = satellite_name.split('_')
         if len(satellite_model_name_splitted_list) >= 2:
             satellite_model_name_splitted_list[-2] += '0'
@@ -82,46 +97,26 @@ def generate_satellite(data_structure):
                 message=f"Satellite name '{satellite_name}' does not have enough '_' segments, used fallback name '{satellite_model_name_v0}'"
             )
 
-
-        filename = os.path.join(model_path_v0 , f"{satellite_model_name_v0}.sql")
-                
-        path = os.path.join(model_path_v0)
-
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(path)
-
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(path)
-
+        filename = os.path.join(full_model_path, f"{satellite_model_name_v0}.sql")
+        if not os.path.exists(full_model_path):
+            os.makedirs(full_model_path)
         with open(filename, 'w') as f:
             f.write(command_v0.expandtabs(2))
             if data_structure['console_outputs']:
                 data_structure['print2FeedbackConsole'](message= f"Created Satellite Model {satellite_model_name_v0}")
 
-        #Satellite_v1
+        # Satellite_v1
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "sat_v1.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template sat_v1.txt: {e}")
             return
-        f.close()
         command_v1 = command_tmp.replace('@@SatName', satellite_model_name_v0).replace('@@Hashkey', hashkey_column).replace('@@Hashdiff', hashdiff_column).replace('@@LoadDate', loaddate).replace('@@Schema', rdv_default_schema)
-            
-  
 
-        filename_v1 = os.path.join(model_path_v1 , f"{satellite_name}.sql")
-                
-        path_v1 = os.path.join(model_path_v1)
-
-        # Check whether the specified path exists or not
-        isExist_v1 = os.path.exists(path_v1)
-
-        if not isExist_v1:   
-        # Create a new directory because it does not exist 
-            os.makedirs(path_v1)
-
+        filename_v1 = os.path.join(full_model_path, f"{satellite_name}.sql")
+        if not os.path.exists(full_model_path):
+            os.makedirs(full_model_path)
         with open(filename_v1, 'w') as f:
             f.write(command_v1.expandtabs(2))
             if data_structure['console_outputs']:

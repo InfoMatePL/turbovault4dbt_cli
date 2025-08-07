@@ -1,38 +1,39 @@
 import os
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
 
 def generate_ref_sat(cursor,source_name, source_object):
-        query = f"""
-        SELECT DISTINCT 'stg_' || LOWER(src.Source_Object),rh.Source_Column_Physical_Name,rs.Target_Reference_table_physical_name,GROUP_CONCAT(rs.Source_Column_Physical_Name)
-        FROM ref_sat rs
-        inner join ref_hub rh on rs.Parent_Table_Identifier = rh.Reference_Hub_Identifier and rs.Source_Table_Identifier = rh.Source_Table_Identifier
-        inner join source_data src on rs.Source_Table_Identifier = src.Source_table_identifier
-        WHERE 1=1
-        AND src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'
-        GROUP BY src.Source_Object,rs.Target_Reference_table_physical_name
-        ORDER BY rs.Target_Column_Sort_Order asc
-"""
+    query = f"""
+    SELECT DISTINCT 'stg_' || LOWER(src.Source_Object),rh.Source_Column_Physical_Name,rs.Target_Reference_table_physical_name,GROUP_CONCAT(rs.Source_Column_Physical_Name)
+    FROM ref_sat rs
+    inner join ref_hub rh on rs.Parent_Table_Identifier = rh.Reference_Hub_Identifier and rs.Source_Table_Identifier = rh.Source_Table_Identifier
+    inner join source_data src on rs.Source_Table_Identifier = src.Source_table_identifier
+    WHERE 1=1
+    AND src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'
+    GROUP BY src.Source_Object,rs.Target_Reference_table_physical_name
+    ORDER BY rs.Target_Column_Sort_Order asc
+    """
+    cursor.execute(query)
+    return cursor.fetchall()
 
-        cursor.execute(query)
-        return cursor.fetchall()
 def generate_source_model(cursor,source_name,source_object,ref_hub_id):
-        query = f""" SELECT DISTINCT ('stg_' || src.Source_Object ), src.Static_Part_of_Record_Source_Column
-        from ref_hub rh
-        inner join source_data src on rh.Source_Table_Identifier = src.Source_table_identifier
-        WHERE 1=1
-        AND rh.Reference_Hub_Identifier= '{ref_hub_id}'
-        AND src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'"""
-        cursor.execute(query)
-        results = cursor.fetchall()
-        return results
+    query = f""" SELECT DISTINCT ('stg_' || src.Source_Object ), src.Static_Part_of_Record_Source_Column
+    from ref_hub rh
+    inner join source_data src on rh.Source_Table_Identifier = src.Source_table_identifier
+    WHERE 1=1
+    AND rh.Reference_Hub_Identifier= '{ref_hub_id}'
+    AND src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'"""
+    cursor.execute(query)
+    results = cursor.fetchall()
+    return results
 
 def get_hub_source(cursor,source_name,source_object):
-        query = f"""SELECT DISTINCT rh.Reference_Hub_Identifier,rh.Target_Reference_table_physical_name,rh.Source_Column_Physical_Name
+    query = f"""SELECT DISTINCT rh.Reference_Hub_Identifier,rh.Target_Reference_table_physical_name,rh.Source_Column_Physical_Name
     from ref_hub rh
     inner join source_data src on rh.Source_Table_Identifier = src.Source_Table_Identifier
     WHERE src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'
     ORDER BY  rh.Target_Column_Sort_Order asc"""
-        cursor.execute(query)
-        return cursor.fetchall()
+    cursor.execute(query)
+    return cursor.fetchall()
 
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT IFNULL(GROUP_NAME,'') from ref_table where Reference_Table_Identifier = '{object_id}' LIMIT 1"""
@@ -74,6 +75,14 @@ def generate_ref_list(cursor, source_name, source_object):
 
     return results
 
+    if has_column(cursor, "ref_table", "output_dir"):
+        cursor.execute("SELECT output_dir FROM ref_table WHERE Reference_Table_Identifier = ? LIMIT 1", (ref_id,))
+        result = cursor.fetchone()
+        output_dir = result[0] if result and result[0] else ""
+    else:
+        output_dir = ""
+
+
 def generate_ref(data_structure):
     cursor = data_structure['cursor']
     source = data_structure['source']
@@ -86,18 +95,17 @@ def generate_ref(data_structure):
     console_outputs=  data_structure['console_outputs']
     ref_list = generate_ref_list(cursor,source_name, source_object)
     for ref in ref_list:
-
         ref_id = ref[0]
         ref_name = ref[1]
         historized = ref[2]
 
         group_name = 'RDV/' + get_groupname(cursor,ref_id)
-        
+        output_dir = get_output_dir(cursor, ref_id)
+
         ref_hub_list = get_ref_hub(cursor,ref_id)
         ref_hubs = []
         for ref_hub in ref_hub_list:
             ref_hubs.append(ref_hub)
-        ##@@RefHub
         ref_hub_string_list = list(dict.fromkeys(ref_hubs))
         if(len(ref_hub_string_list) > 1):
             raise Exception('Reference Table has more than one referenced Hub')
@@ -105,42 +113,39 @@ def generate_ref(data_structure):
         for elem in ref_hub_string_list:
             ref_hub_string += elem[0]
 
-        ##@@RefSat
-        
         ref_sat_list = get_ref_sat(cursor,ref_id)
         ref_sats = []
         for ref_sat in ref_sat_list:
             ref_sats.append(ref_sat)
 
         ref_sat_string_list = []
-
         for sat in ref_sats:
             sat_name = sat[0].split('|')[0]
             include = sat[0].split('|')[1]
             exclude = sat[0].split('|')[2]
             if(include != '' and exclude == ''):
                 include_columns = include.split(';')
-                sat_name = f'\n\t- {sat_name}:\n\t\t\tinclude:'
+                sat_name_str = f'\n\t- {sat_name}:\n\t\t\tinclude:'
                 for column in include_columns:
-                    sat_name += f'\n\t\t\t\t- {column}'
-                ref_sat_string_list.append(sat_name)
+                    sat_name_str += f'\n\t\t\t\t- {column}'
+                ref_sat_string_list.append(sat_name_str)
             elif(include == '' and exclude != ''):
                 exclude_columns = exclude.split(';')
-                sat_name = f'\n\t- {sat_name}:\n\t\t\texclude:'
+                sat_name_str = f'\n\t- {sat_name}:\n\t\t\texclude:'
                 for column in exclude_columns:
-                    sat_name += f'\n\t\t\t\t- {column}'
-                ref_sat_string_list.append(sat_name)
+                    sat_name_str += f'\n\t\t\t\t- {column}'
+                ref_sat_string_list.append(sat_name_str)
             else:
-                sat_name = f'\n\t- {sat_name}: \n'
-                ref_sat_string_list.append(sat_name)
+                sat_name_str = f'\n\t- {sat_name}: \n'
+                ref_sat_string_list.append(sat_name_str)
         ref_sat_string_list = list(dict.fromkeys(ref_sat_string_list))
         ref_sat_string = ""
         for elem in ref_sat_string_list:
             ref_sat_string += elem
 
-        ##@@Historized
         if(historized != 'full' and historized != 'latest'):
             historized = f"snapshot'\nsnapshot_relation:'{historized}"
+
         root = os.path.join(os.path.dirname(os.path.abspath(__file__)).split('\\procs\\sqlite3')[0])
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_table.txt"), "r") as f:
@@ -148,84 +153,67 @@ def generate_ref(data_structure):
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_table.txt: {e}")
             return
-        f.close()
         command = command_tmp.replace('@@Schema',rdv_default_schema).replace('@@RefHub', ref_hub_string).replace('@@RefSat',ref_sat_string).replace('@@Historized',historized)
-           
-        model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
-        filename = os.path.join(model_path,  f"{ref_name}.sql")
-                
+        
+        # Build the full output directory for the reference table
+        base_model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
+        if output_dir:
+            output_dir = sanitize_output_dir(output_dir)
+            full_model_path = os.path.join(base_model_path, output_dir)
+        else:
+            full_model_path = base_model_path
+        filename = os.path.join(full_model_path,  f"{ref_name}.sql")
 
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(model_path)
-
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(model_path)
+        if not os.path.exists(full_model_path):
+            os.makedirs(full_model_path)
 
         with open(filename, 'w') as f:
             f.write(command.expandtabs(2))
             if console_outputs:
                 data_structure['print2FeedbackConsole'](message= f"Created Reference Table Model {ref_name}")
 
-        #Reference Hub
+        # Reference Hub
         relevant_hubs = get_hub_source(cursor,source_name,source_object)
         bk = []
         for key in relevant_hubs:
             bk.append(key[2])
         bk_str = ','.join(bk)
         source_models = ''
-
-
         for hub in relevant_hubs:
             ref_hub_id = hub[0]
             ref_hub_name = hub[1]
             ref_keys = hub[2]
-
-
             source_model_list = generate_source_model(cursor,source_name,source_object,ref_hub_id)
             for src in source_model_list:
                 Source_name = src[0]
                 rsrc_static = src[1]
                 source_models += f"\n\t\t- name: {Source_name.lower()}\n\t\t\tref_keys: '{ref_keys}'\n\t\t\trsrc_static: '{rsrc_static}'"
-                
-        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_hub.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_hub.txt: {e}")
             return
-        f.close()
         command = command_tmp.replace('@@Schema',rdv_default_schema).replace('@@SourceModel', source_models).replace('@@RefKeys',bk_str)
-           
-        model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',Source_name).replace('@@timestamp',generated_timestamp)
-        filename = os.path.join(model_path,  f"{ref_hub_name}.sql")
-                
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(model_path)
-
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(model_path)
-
+        
+        # Use the same output_dir for the hub as for the table
+        filename = os.path.join(full_model_path,  f"{ref_hub_name}.sql")
+        if not os.path.exists(full_model_path):
+            os.makedirs(full_model_path)
         with open(filename, 'w') as f:
             f.write(command.expandtabs(2))
             if console_outputs:
                 data_structure['print2FeedbackConsole'](message= f"Created Reference Hub Model {ref_hub_name}")
 
-        #Ref Satellites
-
+        # Ref Satellites
         ref_sat_list = generate_ref_sat(cursor,source_name, source_object)
-        command_tmp = ''
-        #Satellite v0
-        root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        # Satellite v0
         try:
             with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_sat_v0.txt"), "r") as f:
                 command_tmp = f.read()
         except Exception as e:
             data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_sat_v0.txt: {e}")
             return
-        f.close()
 
         for sat in ref_sat_list:
             sat_source = sat[0]
@@ -243,45 +231,25 @@ def generate_ref(data_structure):
 
             command = command_tmp.replace('@@Schema',rdv_default_schema).replace('@@SourceModel', sat_source).replace('@@RefKeys',sat_key).replace('@@HashDiff',hashdiff_column).replace('@@Payload',payload)
 
-            model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',Source_name).replace('@@timestamp',generated_timestamp)
-            filename = os.path.join(model_path,  f"{satellite_model_name_v0}.sql")
-                    
-            # Check whether the specified path exists or not
-            isExist = os.path.exists(model_path)
-
-            if not isExist:   
-            # Create a new directory because it does not exist 
-                os.makedirs(model_path)
-
+            filename = os.path.join(full_model_path,  f"{satellite_model_name_v0}.sql")
+            if not os.path.exists(full_model_path):
+                os.makedirs(full_model_path)
             with open(filename, 'w') as f:
                 f.write(command.expandtabs(2))
                 if console_outputs:
                     data_structure['print2FeedbackConsole'](message= f"Created Reference Sat Model {sat_name}")
 
-            #Satellite_v1
-            root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            # Satellite_v1
             try:
                 with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "ref_sat_v1.txt"), "r") as f:
                     command_tmp = f.read()
             except Exception as e:
                 data_structure['print2FeedbackConsole'](message=f"Failed to load template ref_sat_v1.txt: {e}")
                 return
-            f.close()
             command_v1 = command_tmp.replace('@@Schema',rdv_default_schema).replace('@@RefSat', satellite_model_name_v0).replace('@@RefKeys', sat_key).replace('@@HashDiff', hashdiff_column).replace('@@Schema', rdv_default_schema)
-                
-    
-
-            filename_v1 = os.path.join(model_path , f"{sat_name}.sql")
-                    
-            path_v1 = os.path.join(model_path)
-
-            # Check whether the specified path exists or not
-            isExist_v1 = os.path.exists(path_v1)
-
-            if not isExist_v1:   
-            # Create a new directory because it does not exist 
-                os.makedirs(path_v1)
-
+            filename_v1 = os.path.join(full_model_path , f"{sat_name}.sql")
+            if not os.path.exists(full_model_path):
+                os.makedirs(full_model_path)
             with open(filename_v1, 'w') as f:
                 f.write(command_v1.expandtabs(2))
                 if console_outputs:

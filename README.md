@@ -102,9 +102,10 @@ turbovault run -f csv path/to/your_csv_folder
 turbovault run -f xlsx path/to/your.xlsx -s hub1 link1 sat1
 turbovault run -f csv path/to/your_csv_folder -s '+hub1' '@sat1'
 
-# Specify output directory
+# Specify output directory (all generated files will go here unless overridden by metadata)
 turbovault run -f xlsx path/to/your.xlsx --output-dir my_output_dir
 ```
+
 #### Command reference:
 - `turbovault run -f {xls|xlsx|csv} <input> [-s <selectors>] [--output-dir <dir>]`  
   Generate dbt models for all or selected nodes.
@@ -116,7 +117,10 @@ turbovault run -f xlsx path/to/your.xlsx --output-dir my_output_dir
 - `input`: Path to Excel file (`.xls`/`.xlsx`) or folder containing CSV files (for `csv`)
 - `-s, --select`: (Optional) Node selectors (space-separated).  
    Examples: `hub1`, `+sat1`, `hub2+`, `@masat3`
-- `--output-dir`: (Optional) Output directory for generated files
+- `--output-dir`: (Optional) Output directory for all generated files. 
+   By default, all models will be placed in this directory. If your metadata (Excel/CSV) includes an `output_dir` column for an asset, that asset's file will be placed in a subdirectory under `--output-dir` (e.g., `--output-dir models` and `output_dir` column value `01_RawVault/Sales` results in `models/01_RawVault/Sales/Hub1.sql`).
+   If `output_dir` is not present in your metadata, all files go directly into the main output directory.
+   Both `/` and `\` are supported as path separators and absolute paths are automatically sanitized to prevent writing outside the output directory.
 
 #### Selector syntax:
 - `A+` — node A and all descendants

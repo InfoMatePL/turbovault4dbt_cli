@@ -1,4 +1,5 @@
 import os
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
 
 def get_groupname(cursor,source_name,source_object):
     query = f"""SELECT DISTINCT GROUP_NAME from source_data 
@@ -179,66 +180,118 @@ def gen_multiactive_columns(cursor, source_name, source_object):
   return command
 
 def generate_stage(data_structure):
-  cursor = data_structure['cursor']
-  source = data_structure['source']
-  source_name = data_structure['source_name']
-  source_object = data_structure['source_object']
-  generated_timestamp = data_structure['generated_timestamp']
-  stage_default_schema = data_structure['stage_default_schema']
-  model_path = data_structure['model_path']
-  hashdiff_naming = data_structure['hashdiff_naming']
-  try:
-    flowBiConfigs = data_structure['flowBiConfigs']
-  except:
-    pass
-  
-  try:
-    hashed_columns = gen_hashed_columns(cursor, hashdiff_naming, source_name, source_object)
-    prejoins = gen_prejoin_columns(cursor, source_name, source_object)
-    multiactive = gen_multiactive_columns(cursor, source_name, source_object)
-  except Exception as e:
-    data_structure['print2FeedbackConsole'](message=f"Failed to query columns for Stage: {e}")
-    return
-  group_name = get_groupname(cursor,source_name,source_object)
-  model_path = model_path.replace("@@GroupName", 'Stage').replace("@@SourceSystem", source_name).replace('@@timestamp',generated_timestamp)
+    cursor = data_structure['cursor']
+    source = data_structure['source']
+    source_name = data_structure['source_name']
+    source_object = data_structure['source_object']
+    generated_timestamp = data_structure['generated_timestamp']
+    stage_default_schema = data_structure['stage_default_schema']
+    model_path = data_structure['model_path']
+    hashdiff_naming = data_structure['hashdiff_naming']
+    try:
+        flowBiConfigs = data_structure['flowBiConfigs']
+    except:
+        pass
 
-  query = f"""SELECT Source_Schema_Physical_Name,Source_Table_Physical_Name, Record_Source_Column, Load_Date_Column, Source_System  FROM source_data src
+    try:
+        hashed_columns = gen_hashed_columns(cursor, hashdiff_naming, source_name, source_object)
+        prejoins = gen_prejoin_columns(cursor, source_name, source_object)
+        multiactive = gen_multiactive_columns(cursor, source_name, source_object)
+    except Exception as e:
+        data_structure['print2FeedbackConsole'](message=f"Failed to query columns for Stage: {e}")
+        return
+    group_name = get_groupname(cursor,source_name,source_object)
+    model_path_base = model_path.replace("@@GroupName", 'Stage').replace("@@SourceSystem", source_name).replace('@@timestamp',generated_timestamp)
+
+    if has_column(cursor, "source_data", "output_dir"):
+        query = f"""SELECT Source_Schema_Physical_Name,Source_Table_Physical_Name, Record_Source_Column, Load_Date_Column, Source_System, output_dir FROM source_data src
                 WHERE src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'
                 """
 
-  cursor.execute(query)
-  sources = cursor.fetchall()
+        cursor.execute(query)
+        sources = cursor.fetchall()
 
-  if not sources:
-    data_structure['print2FeedbackConsole'](message=f"No source_data found for Source_System='{source_name}' and Source_Object='{source_object}'. Skipping stage generation.")
-    return
+        if not sources:
+            data_structure['print2FeedbackConsole'](message=f"No source_data found for Source_System='{source_name}' and Source_Object='{source_object}'. Skipping stage generation.")
+            return
 
-  for row in sources: #sources usually only has one row
-    source_schema_name = row[0]
-    source_table_name = row[1]  
-    rs = row[2]
-    ldts = row[3]
-    source_system_name = row[4]
+        for row in sources: #sources usually only has one row
+            source_schema_name = row[0]
+            source_table_name = row[1]
+            rs = row[2]
+            ldts = row[3]
+            source_system_name = row[4]
+            output_dir = row[5] if len(row) > 5 and row[5] else ""
 
-  root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-  try:
-    with open(os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(__file__))), "templates", "stage.txt"), "r") as f:
-      command_tmp = f.read()
-  except Exception as e:
-    data_structure['print2FeedbackConsole'](message=f"Failed to load template stage.txt: {e}")
-    return
-  f.close()
-  command = command_tmp.replace("@@RecordSource",rs).replace("@@LoadDate",ldts).replace("@@HashedColumns", hashed_columns).replace("@@PrejoinedColumns",prejoins).replace('@@SourceName',source_system_name).replace('@@SourceTable',source_table_name).replace('@@SCHEMA',stage_default_schema).replace('@@MultiActive',multiactive)
+            # --- Build the full output directory for this stage ---
+            if output_dir:
+                output_dir = sanitize_output_dir(output_dir)
+                full_model_path = os.path.join(model_path_base, output_dir)
+            else:
+                full_model_path = model_path_base
 
-  filename = os.path.join(model_path , f"stg_{source_table_name.lower()}.sql")
-    
-  # Check whether the specified path exists or not
-  isExist = os.path.exists(model_path)
-  if not isExist:   
-  # Create a new directory because it does not exist 
-      os.makedirs(model_path)
+            root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            try:
+                with open(os.path.join(root, "templates", "stage.txt"), "r") as f:
+                    command_tmp = f.read()
+            except Exception as e:
+                data_structure['print2FeedbackConsole'](message=f"Failed to load template stage.txt: {e}")
+                return
+            command = command_tmp.replace("@@RecordSource",rs).replace("@@LoadDate",ldts).replace("@@HashedColumns", hashed_columns).replace("@@PrejoinedColumns",prejoins).replace('@@SourceName',source_system_name).replace('@@SourceTable',source_table_name).replace('@@SCHEMA',stage_default_schema).replace('@@MultiActive',multiactive)
 
-  with open(filename, 'w') as f:
-    f.write(command.expandtabs(2))
-  if data_structure['console_outputs']:
-    data_structure['print2FeedbackConsole'](message= f"Created stage model \'stg_{source_table_name.lower()}.sql\'")
+            filename = os.path.join(full_model_path, f"stg_{source_table_name.lower()}.sql")
+
+            # Ensure the directory exists
+            if not os.path.exists(full_model_path):
+                os.makedirs(full_model_path)
+
+            with open(filename, 'w') as f:
+                f.write(command.expandtabs(2))
+            if data_structure['console_outputs']:
+                data_structure['print2FeedbackConsole'](message= f"Created stage model 'stg_{source_table_name.lower()}.sql'")
+    else:
+        query = f"""SELECT Source_Schema_Physical_Name,Source_Table_Physical_Name, Record_Source_Column, Load_Date_Column, Source_System FROM source_data src
+                WHERE src.Source_System = '{source_name}' and src.Source_Object = '{source_object}'
+                """
+
+        cursor.execute(query)
+        sources = cursor.fetchall()
+
+        if not sources:
+            data_structure['print2FeedbackConsole'](message=f"No source_data found for Source_System='{source_name}' and Source_Object='{source_object}'. Skipping stage generation.")
+            return
+
+        for row in sources: #sources usually only has one row
+            source_schema_name = row[0]
+            source_table_name = row[1]
+            rs = row[2]
+            ldts = row[3]
+            source_system_name = row[4]
+            output_dir = ""
+
+            # --- Build the full output directory for this stage ---
+            if output_dir:
+                output_dir = sanitize_output_dir(output_dir)
+                full_model_path = os.path.join(model_path_base, output_dir)
+            else:
+                full_model_path = model_path_base
+
+            root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            try:
+                with open(os.path.join(root, "templates", "stage.txt"), "r") as f:
+                    command_tmp = f.read()
+            except Exception as e:
+                data_structure['print2FeedbackConsole'](message=f"Failed to load template stage.txt: {e}")
+                return
+            command = command_tmp.replace("@@RecordSource",rs).replace("@@LoadDate",ldts).replace("@@HashedColumns", hashed_columns).replace("@@PrejoinedColumns",prejoins).replace('@@SourceName',source_system_name).replace('@@SourceTable',source_table_name).replace('@@SCHEMA',stage_default_schema).replace('@@MultiActive',multiactive)
+
+            filename = os.path.join(full_model_path, f"stg_{source_table_name.lower()}.sql")
+
+            # Ensure the directory exists
+            if not os.path.exists(full_model_path):
+                os.makedirs(full_model_path)
+
+            with open(filename, 'w') as f:
+                f.write(command.expandtabs(2))
+            if data_structure['console_outputs']:
+                data_structure['print2FeedbackConsole'](message= f"Created stage model 'stg_{source_table_name.lower()}.sql'")

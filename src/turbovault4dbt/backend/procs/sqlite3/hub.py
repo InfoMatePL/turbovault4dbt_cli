@@ -1,4 +1,6 @@
 import os
+from turbovault4dbt.backend.procs.sqlite3.utils import has_column, sanitize_output_dir
+
 def get_groupname(cursor,object_id):
     query = f"""SELECT DISTINCT GROUP_NAME from standard_hub where Hub_Identifier = '{object_id}' ORDER BY Is_Primary_Source LIMIT 1"""
     cursor.execute(query)
@@ -98,11 +100,18 @@ def generate_hub(data_structure):
         return
 
     for hub in hub_list:
-
         hub_name = hub[1]
         hub_id = hub[0]
         bk_list = hub[2].split(',')
         group_name = 'RDV/' + get_groupname(cursor,hub_id)
+
+        # Query for output_dir for this hub
+        if has_column(cursor, "standard_hub", "output_dir"):
+            cursor.execute("SELECT output_dir FROM standard_hub WHERE Hub_Identifier = ? LIMIT 1", (hub_id,))
+            result = cursor.fetchone()
+            output_dir = result[0] if result and result[0] else ""
+        else:
+            output_dir = ""
 
         bk_string = ""
         for bk in bk_list:
@@ -120,15 +129,18 @@ def generate_hub(data_structure):
         f.close()
         command = command_tmp.replace('@@Schema', rdv_default_schema).replace('@@SourceModels', source_models).replace('@@Hashkey', hashkey).replace('@@BusinessKeys', bk_string)
            
-        model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
-        filename = os.path.join(model_path,  f"{hub_name}.sql")
+        # Build the full output directory
+        base_model_path = model_path.replace('@@GroupName',group_name).replace('@@SourceSystem',source_name).replace('@@timestamp',generated_timestamp)
+        if output_dir:
+            output_dir = sanitize_output_dir(output_dir)
+            full_model_path = os.path.join(base_model_path, output_dir)
+        else:
+            full_model_path = base_model_path
+        filename = os.path.join(full_model_path, f"{hub_name}.sql")
                 
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(model_path)
-
-        if not isExist:   
-        # Create a new directory because it does not exist 
-            os.makedirs(model_path)
+        # Ensure the directory exists
+        if not os.path.exists(full_model_path):
+            os.makedirs(full_model_path)
 
         with open(filename, 'w') as f:
             f.write(command.expandtabs(2))
